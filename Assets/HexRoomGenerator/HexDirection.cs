@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace HexDungeon
 {
     public enum HexDirection
