@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace HexDungeon
 {
@@ -49,17 +47,6 @@ namespace HexDungeon
             int dq = a.Q - b.Q;
             int dr = a.R - b.R;
             return (Mathf.Abs(dq) + Mathf.Abs(dq + dr) + Mathf.Abs(dr)) / 2;
-        }
-
-        public static IEnumerable<HexCoord> Disk(this HexCoord center, int radius)
-        {
-            for (int dq = -radius; dq <= radius; dq++)
-            {
-                for (int dr = Mathf.Max(-radius, -dq - radius); dr <= Mathf.Min(radius, -dq + radius); dr++)
-                {
-                    yield return new HexCoord(center.Q + dq, center.R + dr);
-                }
-            }
         }
     }
 }

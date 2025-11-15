@@ -5,15 +5,15 @@ namespace HexDungeon
     public class HexRoomGenerator : MonoBehaviour
     {
         public int radius = 2;
-        public float hexSize = 1f;
+        public float hexDistance = 0.5f;
         public GameObject hexPrefab;
-
+        public HexShapeType shapeType;
 
         private void Start()
         {
-            foreach (var hex in HexCoord.Zero.Disk(radius))
+            foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius))
             {
-                Vector3 pos = HexToWorld(hex, hexSize);
+                Vector3 pos = HexToWorld(hex, hexDistance);
                 Instantiate(hexPrefab, pos, Quaternion.identity, transform);
             }
         }

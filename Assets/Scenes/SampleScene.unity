@@ -369,9 +369,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620da3779448e7e4c95561bb3f4427ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 2
-  hexSize: 1
+  radius: 3
+  hexDistance: 0.55
   hexPrefab: {fileID: 367564799919000248, guid: d824d8627b2547744bcf39e995b47b47, type: 3}
+  shapeType: 2
 --- !u!4 &742477495
 Transform:
   m_ObjectHideFlags: 0
