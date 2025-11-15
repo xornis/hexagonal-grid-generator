@@ -24,5 +24,19 @@ namespace HexDungeon
             float y = size * (Mathf.Sqrt(3) * (h.R + h.Q * 0.5f));
             return new Vector3(x, y, 0f);
         }
+
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying)
+            {
+                Gizmos.color = Color.yellow;
+
+                foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius))
+                {
+                    Vector3 pos = HexToWorld(hex, hexDistance);
+                    Gizmos.DrawWireSphere(pos, 0.75f * hexDistance);
+                }
+            }
+        }
     }
 }
