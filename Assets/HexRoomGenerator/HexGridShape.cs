@@ -5,7 +5,7 @@ namespace HexDungeon
 {
     public enum HexShapeType
     {
-        Disk, Ring, Experimental
+        Disk, Ring, TwoRoomsWithCorridor,
     }
 
     public static class HexGridShape
@@ -16,7 +16,7 @@ namespace HexDungeon
             {
                 HexShapeType.Disk => Disk(center, radius),
                 HexShapeType.Ring => Ring(center, radius),
-                HexShapeType.Experimental => Experimental(center, radius),
+                HexShapeType.TwoRoomsWithCorridor => TwoRoomsWithCorridor(),
                 _ => null
             };
         }
@@ -48,17 +48,39 @@ namespace HexDungeon
             }
         }
 
-        public static IEnumerable<HexCoord> Experimental(HexCoord center, int radius)
+        public static IEnumerable<HexCoord> Corridor(HexCoord start, HexCoord end)
         {
-            for (int dq = -radius; dq <= radius; dq++)
+            int steps = start.Distance(end);
+
+            Vector3 cubeA = HexGeometryUtils.AxialToCube(start);
+            Vector3 cubeB = HexGeometryUtils.AxialToCube(end);
+
+            for (int i = 0; i <= steps; i++)
             {
-                for (int dr = Mathf.Max(-radius, -dq - radius);
-                    dr <= Mathf.Min(radius, -dq + radius); dr++)
-                {
-                    var hex = new HexCoord(center.Q + dq, center.R + dr);
-                    yield return hex;
-                }
+                float t = steps == 0 ? 0 : (float)i / steps;
+
+                float x = Mathf.Lerp(cubeA.x, cubeB.x, t);
+                float y = Mathf.Lerp(cubeA.y, cubeB.y, t);
+                float z = Mathf.Lerp(cubeA.z, cubeB.z, t);
+
+                Vector3 rounded = HexGeometryUtils.CubeRound(new Vector3(x, y, z));
+
+                yield return HexGeometryUtils.CubeToAxial(rounded);
             }
+        }
+
+        public static IEnumerable<HexCoord> TwoRoomsWithCorridor()
+        {
+            HexCoord roomACenter = new HexCoord(0, 0);
+            HexCoord roomBCenter = new HexCoord(5, -10);
+            HexCoord roomCCenter = new HexCoord(-10, -20);
+
+            foreach (var hex in Disk(roomACenter, 3)) yield return hex;
+            foreach (var hex in Disk(roomBCenter, 2)) yield return hex;
+            foreach (var hex in Disk(roomCCenter, 2)) yield return hex;
+            foreach (var hex in Corridor(roomACenter, roomBCenter)) yield return hex;
+            foreach (var hex in Corridor(roomBCenter, roomCCenter)) yield return hex;
+            foreach (var hex in Corridor(roomCCenter, roomACenter)) yield return hex;
         }
     }
 }
