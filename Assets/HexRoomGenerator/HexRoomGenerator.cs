@@ -8,10 +8,11 @@ namespace HexDungeon
         public float hexDistance = 0.5f;
         public GameObject hexPrefab;
         public HexShapeType shapeType;
+        public int corridorThickness;
 
         private void Start()
         {
-            foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius))
+            foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
             {
                 Vector3 pos = HexToWorld(hex, hexDistance);
                 Instantiate(hexPrefab, pos, Quaternion.identity, transform);
@@ -31,7 +32,7 @@ namespace HexDungeon
             {
                 Gizmos.color = Color.yellow;
 
-                foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius))
+                foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
                 {
                     Vector3 pos = HexToWorld(hex, hexDistance);
                     Gizmos.DrawWireSphere(pos, 0.75f * hexDistance);

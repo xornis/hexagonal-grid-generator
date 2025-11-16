@@ -10,13 +10,13 @@ namespace HexDungeon
 
     public static class HexGridShape
     {
-        public static IEnumerable<HexCoord> Generate(HexShapeType type, HexCoord center, int radius)
+        public static IEnumerable<HexCoord> Generate(HexShapeType type, HexCoord center, int radius, int corridorThickness)
         {
             return type switch
             {
                 HexShapeType.Disk => Disk(center, radius),
                 HexShapeType.Ring => Ring(center, radius),
-                HexShapeType.TwoRoomsWithCorridor => TwoRoomsWithCorridor(),
+                HexShapeType.TwoRoomsWithCorridor => TwoRoomsWithCorridor(corridorThickness),
                 _ => null
             };
         }
@@ -48,7 +48,14 @@ namespace HexDungeon
             }
         }
 
-        public static IEnumerable<HexCoord> Corridor(HexCoord start, HexCoord end)
+        public static IEnumerable<HexCoord> Corridor(HexCoord start, HexCoord end, int thickness)
+        {
+            foreach (var hex in CorridorLine(start, end))
+                foreach (var thickHex in ExpandThickness(hex, thickness))
+                    yield return thickHex;
+        }
+
+        private static IEnumerable<HexCoord> CorridorLine(HexCoord start, HexCoord end)
         {
             int steps = start.Distance(end);
 
@@ -69,18 +76,25 @@ namespace HexDungeon
             }
         }
 
-        public static IEnumerable<HexCoord> TwoRoomsWithCorridor()
+        private static IEnumerable<HexCoord> ExpandThickness(HexCoord center, int thickness)
+        {
+            yield return center;
+
+            if (thickness <= 1) yield break;
+
+            for (int ring = 1; ring < thickness; ring++)
+                foreach (var hex in Ring(center, ring))
+                    yield return hex;
+        }
+
+        public static IEnumerable<HexCoord> TwoRoomsWithCorridor(int thickness)
         {
             HexCoord roomACenter = new HexCoord(0, 0);
-            HexCoord roomBCenter = new HexCoord(5, -10);
-            HexCoord roomCCenter = new HexCoord(-10, -20);
+            HexCoord roomBCenter = new HexCoord(25, -10);
 
             foreach (var hex in Disk(roomACenter, 3)) yield return hex;
             foreach (var hex in Disk(roomBCenter, 2)) yield return hex;
-            foreach (var hex in Disk(roomCCenter, 2)) yield return hex;
-            foreach (var hex in Corridor(roomACenter, roomBCenter)) yield return hex;
-            foreach (var hex in Corridor(roomBCenter, roomCCenter)) yield return hex;
-            foreach (var hex in Corridor(roomCCenter, roomACenter)) yield return hex;
+            foreach (var hex in Corridor(roomACenter, roomBCenter, thickness)) yield return hex;
         }
     }
 }
