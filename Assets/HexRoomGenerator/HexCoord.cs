@@ -18,6 +18,15 @@ namespace HexDungeon
         }
         
         public override string ToString() => $"HexCoord({Q}, {R}, {S})";
+
+        public override bool Equals(object obj)
+        {
+            if (obj is HexCoord other)
+                return Q == other.Q && R == other.R;
+            return false;
+        }
+
+        public override int GetHashCode() => (Q, R).GetHashCode();
     }
 
     public static class HexCoordExtensions
