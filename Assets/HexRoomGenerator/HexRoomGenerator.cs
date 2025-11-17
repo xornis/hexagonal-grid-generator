@@ -3,21 +3,43 @@ using UnityEngine;
 
 namespace HexDungeon
 {
+    public enum GenerationMode
+    {
+        Shapes,
+        RandomWalk
+    }
+
     public class HexRoomGenerator : MonoBehaviour
     {
-        public int radius = 2;
-        public float hexDistance = 0.5f;
-        public GameObject hexPrefab;
-        public HexShapeType shapeType;
-        public int corridorThickness;
+        [Header("=== General ===")]
+        [SerializeField] private int radius = 2;
+        [SerializeField] private float hexDistance = 0.5f;
+        [SerializeField] private GameObject hexPrefab;
+
+        [Header("=== Generation ===")]
+        [SerializeField] private GenerationMode mode;
+
+        [Header("=== Random Walk ===")]
+        [SerializeField] private int roomSteps = 10;
+        
+        [Header("=== Shapes ===")]
+        [SerializeField] private HexShapeType shapeType;
+        [SerializeField] private int corridorThickness;
 
         private void Start()
         {
             HashSet<HexCoord> tiles = new HashSet<HexCoord>();
 
-            foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
-                tiles.Add(hex);
-            
+            if (mode == GenerationMode.Shapes)
+            {
+                foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
+                    tiles.Add(hex);
+            }
+            else if (mode == GenerationMode.RandomWalk)
+            {
+                tiles = HexDungeonGraphGenerator.RandomWalkRooms(HexCoord.Zero, roomSteps);
+            }
+
             foreach (var hex in tiles)
             {
                 Vector3 pos = HexToWorld(hex, hexDistance);
