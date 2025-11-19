@@ -8,21 +8,27 @@ namespace HexDungeon
         Disk, Ring, TwoRoomsWithCorridor,
     }
 
-    public static class HexGridShape
+    public static class HexShapeGenerator
     {
         public static IEnumerable<HexCoord> Generate(HexShapeType type, HexCoord center, int radius, int corridorThickness)
         {
-            return type switch
+            switch (type)
             {
-                HexShapeType.Disk => Disk(center, radius),
-                HexShapeType.Ring => Ring(center, radius),
-                HexShapeType.TwoRoomsWithCorridor => TwoRoomsWithCorridor(corridorThickness),
-                _ => null
-            };
+                case HexShapeType.Disk: return Disk(center, radius);
+                case HexShapeType.Ring: return Ring(center, radius);
+                case HexShapeType.TwoRoomsWithCorridor: return TwoRoomsWithCorridor(corridorThickness);
+                default:
+                    Debug.LogWarning($"HexDungeon: unsupported shape generation type {type}");
+                    return Empty();
+            }
         }
 
+        private static IEnumerable<HexCoord> Empty()
+        {
+            yield break;
+        }
 
-        public static IEnumerable<HexCoord> Disk(HexCoord center, int radius)
+        private static IEnumerable<HexCoord> Disk(HexCoord center, int radius)
         {
             for (int dq = -radius; dq <= radius; dq++)
             {
@@ -33,7 +39,7 @@ namespace HexDungeon
             }
         }
 
-        public static IEnumerable<HexCoord> Ring(HexCoord center, int radius)
+        private static IEnumerable<HexCoord> Ring(HexCoord center, int radius)
         {
             for (int dq = -radius; dq <= radius; dq++)
             {
@@ -48,7 +54,7 @@ namespace HexDungeon
             }
         }
 
-        public static IEnumerable<HexCoord> Corridor(HexCoord start, HexCoord end, int thickness)
+        private static IEnumerable<HexCoord> Corridor(HexCoord start, HexCoord end, int thickness)
         {
             foreach (var hex in CorridorLine(start, end))
                 foreach (var thickHex in ExpandThickness(hex, thickness))
@@ -87,7 +93,7 @@ namespace HexDungeon
                     yield return hex;
         }
 
-        public static IEnumerable<HexCoord> TwoRoomsWithCorridor(int thickness)
+        private static IEnumerable<HexCoord> TwoRoomsWithCorridor(int thickness)
         {
             HexCoord roomACenter = new HexCoord(0, 0);
             HexCoord roomBCenter = new HexCoord(25, -10);
