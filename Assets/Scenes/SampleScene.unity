@@ -289,9 +289,12 @@ MonoBehaviour:
   hexDistance: 0.55
   hexPrefab: {fileID: 367564799919000248, guid: d824d8627b2547744bcf39e995b47b47, type: 3}
   mode: 1
-  roomSteps: 100
+  randomType: 0
+  rooms: 20
   shapeType: 1
   corridorThickness: 2
+  debugMode: 0
+  debugStepDelay: 1
 --- !u!4 &742477495
 Transform:
   m_ObjectHideFlags: 0

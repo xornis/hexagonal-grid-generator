@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace HexDungeon
@@ -20,46 +21,64 @@ namespace HexDungeon
         [SerializeField] private GenerationMode mode;
 
         [Header("=== Random Walk ===")]
-        [SerializeField] private HexRandomGenerationType randomGenerationType;
-        [SerializeField] private int roomSteps = 10;
+        [SerializeField] private HexRandomGenerationType randomType;
+        [SerializeField] private int rooms = 10;
         
         [Header("=== Shapes ===")]
         [SerializeField] private HexShapeType shapeType;
         [SerializeField] private int corridorThickness;
 
+        [Header("=== Debugging ===")]
+        [SerializeField] private bool debugMode = false;
+        [SerializeField] private float debugStepDelay = 0.1f;
+
         private void Start()
+        {
+            if (debugMode)
+                StartCoroutine(DebuggedGenerator());
+            else
+                Generator();
+        }
+
+        private IEnumerator DebuggedGenerator()
+        {
+            if (mode == GenerationMode.Shapes)
+            {
+                foreach (var hex in HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
+                {
+                    Vector3 pos = HexToWorld(hex, hexDistance);
+                    Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                    yield return new WaitForSeconds(debugStepDelay);
+                }
+            }
+            else if (mode == GenerationMode.Randomized)
+            {
+                foreach (var hex in HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms))
+                {
+                    Vector3 pos = HexToWorld(hex, hexDistance);
+                    Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                    yield return new WaitForSeconds(debugStepDelay);
+                }
+            }
+
+        }
+
+        private void Generator()
         {
             HashSet<HexCoord> tiles = new HashSet<HexCoord>();
 
             if (mode == GenerationMode.Shapes)
-            {
-                foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
+                foreach (var hex in HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
                     tiles.Add(hex);
-            }
+
             else if (mode == GenerationMode.Randomized)
-            {
-                foreach (var hex in HexDungeonGraphGenerator.Generate(randomGenerationType, HexCoord.Zero, roomSteps))
+                foreach (var hex in HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms))
                     tiles.Add(hex);
-            }
 
             foreach (var hex in tiles)
             {
                 Vector3 pos = HexToWorld(hex, hexDistance);
                 Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-            }
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying)
-            {
-                Gizmos.color = Color.yellow;
-
-                foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
-                {
-                    Vector3 pos = HexToWorld(hex, hexDistance);
-                    Gizmos.DrawWireSphere(pos, 0.75f * hexDistance);
-                }
             }
         }
 

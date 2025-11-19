@@ -8,7 +8,7 @@ namespace HexDungeon
         RandomWalk
     }
 
-    public static class HexDungeonGraphGenerator
+    public static class HexRandomizedGenerator
     {
         public static IEnumerable<HexCoord> Generate(HexRandomGenerationType type, HexCoord start, int steps)
         {
@@ -27,7 +27,7 @@ namespace HexDungeon
             yield break;
         }
 
-        private static IEnumerable<HexCoord> RandomWalk(HexCoord start, int steps)
+        private static IEnumerable<HexCoord> RandomWalk(HexCoord start, int desiredRoomsCount)
         {
             HashSet<HexCoord> rooms = new HashSet<HexCoord>();
             rooms.Add(start);
@@ -35,20 +35,23 @@ namespace HexDungeon
             HexCoord current = start;
             HexCoord? previous = null;
 
-            for (int i = 0; i < steps; i++)
+            while (rooms.Count < desiredRoomsCount)
             {
-                HexCoord next = GetNextStep(current, previous, rooms);
-
-                if (next.Equals(current))
+                for (int i = 0; i < desiredRoomsCount; i++)
                 {
-                    current = GetRandomHex(rooms);
-                    previous = null;
-                    continue;
-                }
+                    HexCoord next = GetNextStep(current, previous, rooms);
 
-                previous = current;
-                current = next;
-                rooms.Add(next);
+                    if (next.Equals(current))
+                    {
+                        current = GetRandomHex(rooms);
+                        previous = null;
+                        continue;
+                    }
+
+                    previous = current;
+                    current = next;
+                    rooms.Add(next);
+                }
             }
 
             foreach (HexCoord hex in rooms)

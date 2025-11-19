@@ -8,7 +8,7 @@ namespace HexDungeon
         Disk, Ring, TwoRoomsWithCorridor,
     }
 
-    public static class HexGridShape
+    public static class HexShapeGenerator
     {
         public static IEnumerable<HexCoord> Generate(HexShapeType type, HexCoord center, int radius, int corridorThickness)
         {
