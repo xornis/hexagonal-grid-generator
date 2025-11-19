@@ -6,7 +6,7 @@ namespace HexDungeon
     public enum GenerationMode
     {
         Shapes,
-        RandomWalk
+        Randomized,
     }
 
     public class HexRoomGenerator : MonoBehaviour
@@ -20,6 +20,7 @@ namespace HexDungeon
         [SerializeField] private GenerationMode mode;
 
         [Header("=== Random Walk ===")]
+        [SerializeField] private HexRandomGenerationType randomGenerationType;
         [SerializeField] private int roomSteps = 10;
         
         [Header("=== Shapes ===")]
@@ -35,9 +36,10 @@ namespace HexDungeon
                 foreach (var hex in HexGridShape.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
                     tiles.Add(hex);
             }
-            else if (mode == GenerationMode.RandomWalk)
+            else if (mode == GenerationMode.Randomized)
             {
-                tiles = HexDungeonGraphGenerator.RandomWalkRooms(HexCoord.Zero, roomSteps);
+                foreach (var hex in HexDungeonGraphGenerator.Generate(randomGenerationType, HexCoord.Zero, roomSteps))
+                    tiles.Add(hex);
             }
 
             foreach (var hex in tiles)

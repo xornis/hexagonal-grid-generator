@@ -3,9 +3,31 @@ using UnityEngine;
 
 namespace HexDungeon
 {
+    public enum HexRandomGenerationType
+    {
+        RandomWalk
+    }
+
     public static class HexDungeonGraphGenerator
     {
-        public static HashSet<HexCoord> RandomWalkRooms(HexCoord start, int steps)
+        public static IEnumerable<HexCoord> Generate(HexRandomGenerationType type, HexCoord start, int steps)
+        {
+            switch (type)
+            {
+                case HexRandomGenerationType.RandomWalk: return RandomWalk(start, steps);
+
+                default:
+                    Debug.LogWarning($"HexDungeon: unsupported random generation type {type}");
+                    return Empty();
+            }
+        }
+
+        private static IEnumerable<HexCoord> Empty()
+        {
+            yield break;
+        }
+
+        private static IEnumerable<HexCoord> RandomWalk(HexCoord start, int steps)
         {
             HashSet<HexCoord> rooms = new HashSet<HexCoord>();
             rooms.Add(start);
@@ -15,36 +37,43 @@ namespace HexDungeon
 
             for (int i = 0; i < steps; i++)
             {
-                List<HexDirection> dirs = new List<HexDirection>();
+                HexCoord next = GetNextStep(current, previous, rooms);
 
-                for (int d = 0; d < 6; d++)
-                {
-                    HexDirection dir = (HexDirection)d;
-                    HexCoord next = current.Neighbor(dir);
-
-                    bool isPrev = previous.HasValue && next.Equals(previous.Value);
-                    bool exists = rooms.Contains(next);
-
-                    if (!isPrev && !exists) dirs.Add(dir);
-                }
-
-                if (dirs.Count == 0)
+                if (next.Equals(current))
                 {
                     current = GetRandomHex(rooms);
                     previous = null;
                     continue;
                 }
 
-                HexDirection rndDir = dirs[Random.Range(0, dirs.Count)];
-                HexCoord nextHex = current.Neighbor(rndDir);
-
                 previous = current;
-                current = nextHex;
-
-                rooms.Add(nextHex);
+                current = next;
+                rooms.Add(next);
             }
 
-            return rooms;
+            foreach (HexCoord hex in rooms)
+                yield return hex;
+        }
+
+        private static HexCoord GetNextStep(HexCoord current, HexCoord? previous, HashSet<HexCoord> rooms)
+        {
+            List<HexDirection> availableDirs = new List<HexDirection>();
+
+            for (int d = 0; d < 6; d++)
+            {
+                HexDirection dir = (HexDirection)d;
+                HexCoord next = current.Neighbor(dir);
+
+                bool isPrev = previous.HasValue && next.Equals(previous.Value);
+                bool exists = rooms.Contains(next);
+
+                if (!isPrev && !exists) availableDirs.Add(dir);
+            }
+
+            if (availableDirs.Count == 0) return current;
+
+            HexDirection rndDir = availableDirs[Random.Range(0, availableDirs.Count)];
+            return current.Neighbor(rndDir);
         }
 
         private static HexCoord GetRandomHex(HashSet<HexCoord> set)
