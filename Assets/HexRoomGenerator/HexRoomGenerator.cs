@@ -29,64 +29,84 @@ namespace HexDungeon
         [SerializeField] private int corridorThickness;
 
         [Header("=== Debugging ===")]
-        [SerializeField] private bool debugMode = false;
+        [SerializeField, Tooltip("Works only in Play Mode")] private bool debugMode = false;
         [SerializeField] private float debugStepDelay = 0.1f;
+        [SerializeField] private bool useSeed;
+        [SerializeField, Tooltip("Works only when useSeed is true")] private int seed;
 
         private void Start()
         {
-            if (debugMode)
-                StartCoroutine(DebuggedGenerator());
-            else
-                Generator();
+            if (debugMode) StartCoroutine(DebugGenerate());
+            else Generate();
         }
 
-        private IEnumerator DebuggedGenerator()
+        private IEnumerable<HexCoord> GetGeneratedCoords()
         {
             if (mode == GenerationMode.Shapes)
-            {
-                foreach (var hex in HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
-                {
-                    Vector3 pos = HexToWorld(hex, hexDistance);
-                    Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-                    yield return new WaitForSeconds(debugStepDelay);
-                }
-            }
-            else if (mode == GenerationMode.Randomized)
-            {
-                foreach (var hex in HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms))
-                {
-                    Vector3 pos = HexToWorld(hex, hexDistance);
-                    Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-                    yield return new WaitForSeconds(debugStepDelay);
-                }
-            }
-
+                return HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness);
+            else 
+                return HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms);
         }
 
-        private void Generator()
+        private void Generate()
         {
+            if (useSeed) Random.InitState(seed);
+
             HashSet<HexCoord> tiles = new HashSet<HexCoord>();
 
-            if (mode == GenerationMode.Shapes)
-                foreach (var hex in HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness))
-                    tiles.Add(hex);
-
-            else if (mode == GenerationMode.Randomized)
-                foreach (var hex in HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms))
-                    tiles.Add(hex);
-
-            foreach (var hex in tiles)
+            foreach (var hex in GetGeneratedCoords())
             {
                 Vector3 pos = HexToWorld(hex, hexDistance);
                 Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                tiles.Add(hex);
+            }
+        }
+
+        private IEnumerator DebugGenerate()
+        {
+            if (useSeed) Random.InitState(seed);
+            
+            HashSet<HexCoord> tiles = new HashSet<HexCoord>();
+
+            foreach (var hex in GetGeneratedCoords())
+            {
+                Vector3 pos = HexToWorld(hex, hexDistance);
+                Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                tiles.Add(hex);
+                yield return new WaitForSeconds(debugStepDelay);
             }
         }
 
         private Vector3 HexToWorld(HexCoord h, float size)
         {
             float x = size * (1.5f * h.Q);
-            float y = size * (Mathf.Sqrt(3) * (h.R + h.Q * 0.5f));
+            float y = size * (Mathf.Sqrt(3) * (h.R + h.Q * 0.5f));      
             return new Vector3(x, y, 0f);
         }
+
+#if UNITY_EDITOR
+        public void EditorGenerate()
+        {
+            EditorClear();
+            Generate();
+        }
+
+        public void EditorClear()
+        {
+            for (int i = transform.childCount - 1; i >= 0; i--)
+                DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+
+        public void EditorRandomizeSeed()
+        {
+            if (useSeed)
+                seed = Random.Range(int.MinValue, int.MaxValue);
+        }
+        public void EditorRandomizeSeedAndGenerate()
+        {
+            EditorRandomizeSeed();
+            EditorGenerate();
+        }
+#endif
     }
 }

@@ -35,23 +35,23 @@ namespace HexDungeon
             HexCoord current = start;
             HexCoord? previous = null;
 
-            while (rooms.Count < desiredRoomsCount)
+            for (int i = rooms.Count; i < desiredRoomsCount;)
             {
-                for (int i = 0; i < desiredRoomsCount; i++)
+                HexCoord next = GetNextStep(current, previous, rooms);
+
+                if (next.Equals(current))
                 {
-                    HexCoord next = GetNextStep(current, previous, rooms);
-
-                    if (next.Equals(current))
-                    {
-                        current = GetRandomHex(rooms);
-                        previous = null;
-                        continue;
-                    }
-
-                    previous = current;
-                    current = next;
-                    rooms.Add(next);
+                    current = GetRandomHex(rooms);
+                    previous = null;
+                    continue;
                 }
+
+                rooms.Add(next);
+
+                previous = current;
+                current = next;
+
+                i++;
             }
 
             foreach (HexCoord hex in rooms)
