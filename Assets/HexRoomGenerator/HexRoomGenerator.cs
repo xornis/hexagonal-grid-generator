@@ -9,13 +9,22 @@ namespace HexDungeon
         Shapes,
         Randomized,
     }
+    public enum HexOrientation
+    {
+        FlatTop,
+        PointyTop
+    }
 
     public class HexRoomGenerator : MonoBehaviour
     {
         [Header("=== General ===")]
-        [SerializeField] private int radius = 2;
-        [SerializeField] private float hexDistance = 0.5f;
+        [SerializeField] private HexOrientation orientation = HexOrientation.FlatTop;
+        [Header("=== Visual ===")]
         [SerializeField] private GameObject hexPrefab;
+        [SerializeField] private float hexScale = 1f;
+        [Header("=== Geometry ===")]
+        [SerializeField] private float hexSize = 1f;
+        [SerializeField] private Vector2 hexSpacing;
 
         [Header("=== Generation ===")]
         [SerializeField] private GenerationMode mode;
@@ -26,6 +35,7 @@ namespace HexDungeon
         
         [Header("=== Shapes ===")]
         [SerializeField] private HexShapeType shapeType;
+        [SerializeField] private int radius = 2;
         [SerializeField] private int corridorThickness;
 
         [Header("=== Debugging ===")]
@@ -56,8 +66,11 @@ namespace HexDungeon
 
             foreach (var hex in GetGeneratedCoords())
             {
-                Vector3 pos = HexToWorld(hex, hexDistance);
-                Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                Vector3 pos = HexToWorld(hex);
+                var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                if (orientation == HexOrientation.PointyTop)
+                    instance.transform.rotation = Quaternion.Euler(0, 0, 90);
+                instance.transform.localScale = Vector3.one * hexScale;
                 tiles.Add(hex);
             }
         }
@@ -70,18 +83,51 @@ namespace HexDungeon
 
             foreach (var hex in GetGeneratedCoords())
             {
-                Vector3 pos = HexToWorld(hex, hexDistance);
-                Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                Vector3 pos = HexToWorld(hex);
+                var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+                if (orientation == HexOrientation.PointyTop)
+                    instance.transform.rotation = Quaternion.Euler(0, 0, 90);
+                instance.transform.localScale = Vector3.one * hexScale;
                 tiles.Add(hex);
                 yield return new WaitForSeconds(debugStepDelay);
             }
         }
 
-        private Vector3 HexToWorld(HexCoord h, float size)
+        private Vector3 HexToWorld(HexCoord hex) => 
+            orientation == HexOrientation.FlatTop
+            ? HexToWorld_FlatTop(hex)
+            : HexToWorld_PointyTop(hex);
+
+        private Vector3 HexToWorld_FlatTop(HexCoord hex)
         {
-            float x = size * (1.5f * h.Q);
-            float y = size * (Mathf.Sqrt(3) * (h.R + h.Q * 0.5f));      
-            return new Vector3(x, y, 0f);
+            float size = hexSize;
+
+            float w = size * 2f;
+            float h = Mathf.Sqrt(3f) * size;
+
+            float x = (3f * size / 2f) * hex.Q;
+            float y = (h * (hex.R + hex.Q * 0.5f));
+
+            x += hexSpacing.x * hex.Q;
+            y += hexSpacing.y * hex.R;
+
+            return new Vector3(x, y, 0);
+        }
+
+        private Vector3 HexToWorld_PointyTop(HexCoord hex)
+        {
+            float size = hexSize;
+
+            float w = Mathf.Sqrt(3f) * size;
+            float h = size * 2f;
+
+            float x = w * (hex.Q + hex.R * 0.5f);
+            float y = (3f * size / 2f) * hex.R;
+
+            x += hexSpacing.x * hex.Q;
+            y += hexSpacing.y * hex.R;
+
+            return new Vector3(x, y, 0);
         }
 
 #if UNITY_EDITOR
