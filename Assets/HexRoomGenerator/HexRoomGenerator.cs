@@ -1,26 +1,29 @@
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
 namespace HexDungeon
 {
+    public interface IHexGenerator
+    {
+        IEnumerable<HexCoord> Generate(HexCoord start);
+    }
+
     public enum GenerationMode
     {
         Shapes,
         Randomized,
     }
-    public enum HexOrientation
-    {
-        FlatTop,
-        PointyTop
-    }
+
 
     public class HexRoomGenerator : MonoBehaviour
     {
         [Header("=== General ===")]
         [SerializeField] private HexOrientation orientation = HexOrientation.FlatTop;
         [Header("=== Visual ===")]
-        [SerializeField] private GameObject hexPrefab;
+        [SerializeField, Tooltip("Note: Hex sprite must be oriented to match selected grid orientation (FlatTop / PointyTop). Generator does not rotate sprites automatically.")]
+        private GameObject hexPrefab;
         [SerializeField] private float hexScale = 1f;
         [Header("=== Geometry ===")]
         [SerializeField] private float hexSize = 1f;
@@ -38,10 +41,12 @@ namespace HexDungeon
         [SerializeField] private int corridorThickness;
 
         [Header("=== Debugging ===")]
-        [SerializeField, Tooltip("Works only in Play Mode")] private bool debugMode = false;
+        [SerializeField, Tooltip("Works only in Play Mode")]
+        private bool debugMode = false;
         [SerializeField] private float debugStepDelay = 0.1f;
         [SerializeField] private bool useSeed;
-        [SerializeField, Tooltip("Works only when useSeed is true")] private int seed;
+        [SerializeField, Tooltip("Works only when useSeed is true")]
+        private int seed;
 
         private void Start()
         {
@@ -49,78 +54,53 @@ namespace HexDungeon
             else Generate();
         }
 
-        private IEnumerable<HexCoord> GetGeneratedCoords()
+        private IHexGenerator CreateGenerator()
         {
-            if (mode == GenerationMode.Shapes)
-                return HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness);
-            else 
-                return HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms);
+            switch (mode)
+            {
+                case GenerationMode.Shapes:
+                    return new HexShapeGenerator(shapeType, radius, corridorThickness);
+
+                case GenerationMode.Randomized:
+                    return new HexRandomizedGenerator(randomType, rooms);
+
+                default:
+                    throw new ArgumentOutOfRangeException($"Unknown generation mode: {mode}");
+            }
         }
 
         private void Generate()
         {
-            if (useSeed) Random.InitState(seed);
+            if (useSeed) UnityEngine.Random.InitState(seed);
 
-            HashSet<HexCoord> tiles = new HashSet<HexCoord>();
+            var layout = new HexLayout(orientation, hexSize);
+            var generator = CreateGenerator();
 
-            foreach (var hex in GetGeneratedCoords())
-            {
-                Vector3 pos = HexToWorld(hex);
-                var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-                if (orientation == HexOrientation.PointyTop)
-                    instance.transform.rotation = Quaternion.Euler(0, 0, 90);
-                instance.transform.localScale = Vector3.one * hexScale;
-                tiles.Add(hex);
-            }
+            foreach (var hex in generator.Generate(HexCoord.Zero))
+                SpawnHex(layout, hex);
         }
 
         private IEnumerator DebugGenerate()
         {
-            if (useSeed) Random.InitState(seed);
-            
-            HashSet<HexCoord> tiles = new HashSet<HexCoord>();
+            if (useSeed) UnityEngine.Random.InitState(seed);
 
-            foreach (var hex in GetGeneratedCoords())
+            var layout = new HexLayout(orientation, hexSize);
+            var generator = CreateGenerator();
+
+            foreach (var hex in generator.Generate(HexCoord.Zero))
             {
-                Vector3 pos = HexToWorld(hex);
-                var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-                if (orientation == HexOrientation.PointyTop)
-                    instance.transform.rotation = Quaternion.Euler(0, 0, 90);
-                instance.transform.localScale = Vector3.one * hexScale;
-                tiles.Add(hex);
+                SpawnHex(layout, hex);
                 yield return new WaitForSeconds(debugStepDelay);
             }
         }
 
-        private Vector3 HexToWorld(HexCoord hex) => 
-            orientation == HexOrientation.FlatTop
-            ? HexToWorld_FlatTop(hex)
-            : HexToWorld_PointyTop(hex);
-
-        private Vector3 HexToWorld_FlatTop(HexCoord hex)
+        private void SpawnHex(HexLayout layout, HexCoord hex)
         {
-            float size = hexSize;
+            if (hexPrefab == null) return;
 
-            float w = size * 2f;
-            float h = Mathf.Sqrt(3f) * size;
-
-            float x = (3f * size / 2f) * hex.Q;
-            float y = (h * (hex.R + hex.Q * 0.5f));
-
-            return new Vector3(x, y, 0);
-        }
-
-        private Vector3 HexToWorld_PointyTop(HexCoord hex)
-        {
-            float size = hexSize;
-
-            float w = Mathf.Sqrt(3f) * size;
-            float h = size * 2f;
-
-            float x = w * (hex.Q + hex.R * 0.5f);
-            float y = (3f * size / 2f) * hex.R;
-
-            return new Vector3(x, y, 0);
+            Vector3 pos = layout.HexToWorld(hex);
+            var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+            instance.transform.localScale = Vector3.one * hexScale;
         }
 
 #if UNITY_EDITOR
@@ -139,7 +119,7 @@ namespace HexDungeon
         public void EditorRandomizeSeed()
         {
             if (useSeed)
-                seed = Random.Range(int.MinValue, int.MaxValue);
+                seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
         public void EditorRandomizeSeedAndGenerate()
         {

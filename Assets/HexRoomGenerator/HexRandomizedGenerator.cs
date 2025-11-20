@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,29 +9,34 @@ namespace HexDungeon
         RandomWalk
     }
 
-    public static class HexRandomizedGenerator
+    public class HexRandomizedGenerator : IHexGenerator
     {
-        public static IEnumerable<HexCoord> Generate(HexRandomGenerationType type, HexCoord start, int steps)
+        private readonly HexRandomGenerationType type;
+        private readonly int desiredRoomCount;
+
+        public HexRandomizedGenerator(HexRandomGenerationType type, int desiredRoomCount)
+        {
+            this.type = type;
+            this.desiredRoomCount = Mathf.Max(1, desiredRoomCount);
+        }
+
+        public IEnumerable<HexCoord> Generate(HexCoord start)
         {
             switch (type)
             {
-                case HexRandomGenerationType.RandomWalk: return RandomWalk(start, steps);
+                case HexRandomGenerationType.RandomWalk: 
+                    foreach (var hex in RandomWalk(start, desiredRoomCount))
+                        yield return hex;
+                    break;
 
                 default:
-                    Debug.LogWarning($"HexDungeon: unsupported random generation type {type}");
-                    return Empty();
+                    throw new ArgumentOutOfRangeException($"Unknown generation type: {type}");
             }
-        }
-
-        private static IEnumerable<HexCoord> Empty()
-        {
-            yield break;
         }
 
         private static IEnumerable<HexCoord> RandomWalk(HexCoord start, int desiredRoomsCount)
         {
-            HashSet<HexCoord> rooms = new HashSet<HexCoord>();
-            rooms.Add(start);
+            HashSet<HexCoord> rooms = new HashSet<HexCoord>() { start };
 
             HexCoord current = start;
             HexCoord? previous = null;
@@ -75,13 +81,13 @@ namespace HexDungeon
 
             if (availableDirs.Count == 0) return current;
 
-            HexDirection rndDir = availableDirs[Random.Range(0, availableDirs.Count)];
+            HexDirection rndDir = availableDirs[UnityEngine.Random.Range(0, availableDirs.Count)];
             return current.Neighbor(rndDir);
         }
 
         private static HexCoord GetRandomHex(HashSet<HexCoord> set)
         {
-            int index = Random.Range(0, set.Count);
+            int index = UnityEngine.Random.Range(0, set.Count);
 
             foreach (HexCoord coord in set)
                 if (index-- == 0) return coord;

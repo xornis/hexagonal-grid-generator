@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,24 +9,38 @@ namespace HexDungeon
         Disk, Ring, TwoRoomsWithCorridor,
     }
 
-    public static class HexShapeGenerator
+    public class HexShapeGenerator : IHexGenerator
     {
-        public static IEnumerable<HexCoord> Generate(HexShapeType type, HexCoord center, int radius, int corridorThickness)
+        private readonly HexShapeType type;
+        private readonly int radius;
+        private readonly int corridorThickness;
+
+        public HexShapeGenerator(HexShapeType type, int radius, int corridorThickness)
+        {
+            this.type = type;
+            this.radius = Mathf.Max(0, radius);
+            this.corridorThickness = Mathf.Max(1, corridorThickness);
+        }
+
+        public IEnumerable<HexCoord> Generate(HexCoord start)
         {
             switch (type)
             {
-                case HexShapeType.Disk: return Disk(center, radius);
-                case HexShapeType.Ring: return Ring(center, radius);
-                case HexShapeType.TwoRoomsWithCorridor: return TwoRoomsWithCorridor(corridorThickness);
-                default:
-                    Debug.LogWarning($"HexDungeon: unsupported shape generation type {type}");
-                    return Empty();
-            }
-        }
+                case HexShapeType.Disk:
+                    foreach (var hex in Disk(start, radius)) yield return hex;
+                    break;
 
-        private static IEnumerable<HexCoord> Empty()
-        {
-            yield break;
+                case HexShapeType.Ring:
+                    foreach (var hex in Ring(start, radius)) yield return hex;
+                    break;
+
+                case HexShapeType.TwoRoomsWithCorridor:
+                    foreach (var hex in TwoRoomsWithCorridor(start, radius, corridorThickness)) yield return hex;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException($"Unknown generation type: {type}");
+            }
         }
 
         private static IEnumerable<HexCoord> Disk(HexCoord center, int radius)
@@ -41,6 +56,12 @@ namespace HexDungeon
 
         private static IEnumerable<HexCoord> Ring(HexCoord center, int radius)
         {
+            if (radius <= 0)
+            {
+                yield return center;
+                yield break;
+            }
+            
             for (int dq = -radius; dq <= radius; dq++)
             {
                 for (int dr = Mathf.Max(-radius, -dq - radius);
@@ -57,8 +78,15 @@ namespace HexDungeon
         private static IEnumerable<HexCoord> Corridor(HexCoord start, HexCoord end, int thickness)
         {
             foreach (var hex in CorridorLine(start, end))
-                foreach (var thickHex in ExpandThickness(hex, thickness))
-                    yield return thickHex;
+            {
+                yield return hex;
+
+                if (thickness <= 1) continue;
+
+                for (int ring = 1; ring < thickness; ring++)
+                    foreach (var thickHex in Ring(hex, ring))
+                        yield return thickHex;
+            }
         }
 
         private static IEnumerable<HexCoord> CorridorLine(HexCoord start, HexCoord end)
@@ -82,25 +110,14 @@ namespace HexDungeon
             }
         }
 
-        private static IEnumerable<HexCoord> ExpandThickness(HexCoord center, int thickness)
+        private static IEnumerable<HexCoord> TwoRoomsWithCorridor(HexCoord start, int radius, int thickness)
         {
-            yield return center;
+            HexCoord roomA = start;
+            HexCoord roomB = new HexCoord(start.Q + radius * 3, start.R - radius);
 
-            if (thickness <= 1) yield break;
-
-            for (int ring = 1; ring < thickness; ring++)
-                foreach (var hex in Ring(center, ring))
-                    yield return hex;
-        }
-
-        private static IEnumerable<HexCoord> TwoRoomsWithCorridor(int thickness)
-        {
-            HexCoord roomACenter = new HexCoord(0, 0);
-            HexCoord roomBCenter = new HexCoord(25, -10);
-
-            foreach (var hex in Disk(roomACenter, 3)) yield return hex;
-            foreach (var hex in Disk(roomBCenter, 2)) yield return hex;
-            foreach (var hex in Corridor(roomACenter, roomBCenter, thickness)) yield return hex;
+            foreach (var hex in Disk(roomA, radius)) yield return hex;
+            foreach (var hex in Disk(roomB, Mathf.Max(1, radius - 1))) yield return hex;
+            foreach (var hex in Corridor(roomA, roomB, thickness)) yield return hex;
         }
     }
 }
