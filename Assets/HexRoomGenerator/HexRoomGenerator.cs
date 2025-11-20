@@ -24,7 +24,6 @@ namespace HexDungeon
         [SerializeField] private float hexScale = 1f;
         [Header("=== Geometry ===")]
         [SerializeField] private float hexSize = 1f;
-        [SerializeField] private Vector2 hexSpacing;
 
         [Header("=== Generation ===")]
         [SerializeField] private GenerationMode mode;
@@ -108,9 +107,6 @@ namespace HexDungeon
             float x = (3f * size / 2f) * hex.Q;
             float y = (h * (hex.R + hex.Q * 0.5f));
 
-            x += hexSpacing.x * hex.Q;
-            y += hexSpacing.y * hex.R;
-
             return new Vector3(x, y, 0);
         }
 
@@ -123,9 +119,6 @@ namespace HexDungeon
 
             float x = w * (hex.Q + hex.R * 0.5f);
             float y = (3f * size / 2f) * hex.R;
-
-            x += hexSpacing.x * hex.Q;
-            y += hexSpacing.y * hex.R;
 
             return new Vector3(x, y, 0);
         }
