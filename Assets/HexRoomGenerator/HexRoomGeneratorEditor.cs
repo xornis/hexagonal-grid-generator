@@ -1,22 +1,180 @@
 #if UNITY_EDITOR
+using HexDungeon;
+using System;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(HexDungeon.HexRoomGenerator))]
+[CustomEditor(typeof(HexRoomGenerator))]
 public class HexRoomGeneratorEditor : Editor
 {
+    private bool generalFoldout = true;
+    private bool visualFoldout = true;
+    private bool geometryFoldout = true;
+    private bool generationFoldout = true;
+    private bool randomFoldout = true;
+    private bool shapesFoldout = true;
+    private bool previewFoldout = true;
+    private bool debugFoldout = true;
+    private HexRoomGenerator gen;
+
+    private void OnEnable() => gen = (HexRoomGenerator)target;
+
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();
+        serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
 
-        HexDungeon.HexRoomGenerator gen = (HexDungeon.HexRoomGenerator)target;
+        DrawSection("General", ref generalFoldout, "orientation");
+        DrawSection("Visual", ref visualFoldout, "hexPrefab", "hexScale");
+        DrawSection("Geometry", ref geometryFoldout, "hexSize");
+        DrawGenerationSection();
+        DrawPreviewSection();
+        DrawDebugSection();
 
-        GUILayout.Space(20);
+        serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
 
-        if (GUILayout.Button("Generate")) gen.EditorGenerate();
-        if (GUILayout.Button("Clear")) gen.EditorClear();
-        if (GUILayout.Button("Randomize Seed")) gen.EditorRandomizeSeed();
-        if (GUILayout.Button("Randomize Seed and Generate")) gen.EditorRandomizeSeedAndGenerate();
+        EditorGUILayout.Space(20);
+    }
+
+    private void DrawGenerationSection()
+    {
+        generationFoldout = EditorGUILayout.Foldout(generationFoldout, "Generation", true, EditorStyles.foldoutHeader);
+        if (!generationFoldout) return;
+
+        Indent(() =>
+        {
+            var modeProp = serializedObject.FindProperty("mode");
+            EditorGUILayout.PropertyField(modeProp);
+
+            bool isRandom = modeProp.enumValueIndex == (int)GenerationMode.Randomized;
+            bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
+
+            GUIToggle(isRandom, () =>
+            DrawRandomSection(isRandom)); // Section is visible only when mode is Randomized
+
+            GUIToggle(isShapes, () =>
+            DrawSection("Shapes", ref shapesFoldout, "shapeType", "radius", "corridorThickness")); // Section is visible only when mode is Randomized
+        });
+    }
+
+    private void DrawPreviewSection()
+    {
+        previewFoldout = EditorGUILayout.Foldout(previewFoldout, "Preview", true, EditorStyles.foldoutHeader);
+        if (!previewFoldout) return;
+
+        Indent(() =>
+        {
+            var previewInEditorProp = serializedObject.FindProperty("previewInEditor");
+            EditorGUILayout.PropertyField(previewInEditorProp);
+            bool isPreviewInEditor = previewInEditorProp.boolValue;
+
+            GUIToggle(isPreviewInEditor, () =>
+            {
+                DrawProp("gizmoColor");
+                DrawProp("gizmoHexScale");
+
+                EditorGUILayout.BeginHorizontal();
+                DrawButton("Build/Rebuild Preview", () => gen.EditorForcePreviewRebuild());
+                DrawButton("Clear Preview", () => gen.EditorClearPreviewInternal());
+                EditorGUILayout.EndHorizontal();
+            });
+        });
+    }
+
+    private void DrawDebugSection()
+    {
+        debugFoldout = EditorGUILayout.Foldout(debugFoldout, "Debug", true, EditorStyles.foldoutHeader);
+        if (!debugFoldout) return;
+
+        Indent(() =>
+        {
+            var debugModeProp = serializedObject.FindProperty("debugMode");
+            EditorGUILayout.PropertyField(debugModeProp);
+            bool isDebugMode = debugModeProp.boolValue;
+
+            GUIToggle(isDebugMode, () =>
+            {
+                DrawProp("debugStepDelay");
+
+                EditorGUILayout.BeginHorizontal();
+                DrawButton("Build/Rebuild Generation", gen.EditorGenerateInternal);
+                DrawButton("Clear Generation", gen.EditorClearInternal);
+                EditorGUILayout.EndHorizontal();
+            });
+        });
+    }
+
+    private void DrawRandomSection(bool isRandom)
+    {
+        randomFoldout = EditorGUILayout.Foldout(randomFoldout, "Random", true, EditorStyles.foldoutHeader);
+        if (!randomFoldout) return;
+
+        Indent(() =>
+        {
+            DrawProp("randomType");
+            DrawProp("rooms");
+
+            var useSeedProp = serializedObject.FindProperty("useSeed");
+            EditorGUILayout.PropertyField(useSeedProp);
+            bool isUsingSeed = useSeedProp.boolValue;
+
+            GUIToggle(isUsingSeed && isRandom, () =>
+            {
+                EditorGUILayout.BeginHorizontal();
+
+                DrawProp("seed");
+                DrawButton("Randomize", () => 
+                { 
+                    gen.EditorRandomizeSeedInternal(); 
+                    serializedObject.ApplyModifiedProperties();
+                });
+
+                EditorGUILayout.EndHorizontal();
+            });
+        });
+
+        EditorGUILayout.Space(10);
+    }
+
+    private void DrawSection(string title, ref bool foldout, params string[] props)
+    {
+        foldout = EditorGUILayout.Foldout(foldout, title, true, EditorStyles.foldoutHeader);
+        if (!foldout) return;
+
+        Indent(() =>
+        {
+            foreach (var propName in props)
+                DrawProp(propName);
+        });
+
+        EditorGUILayout.Space(10);
+    }
+
+    private void DrawProp(string name)
+    {
+        var prop = serializedObject.FindProperty(name);
+        if (prop != null) EditorGUILayout.PropertyField(prop);
+        else EditorGUILayout.HelpBox($"Property '{name}' not found", MessageType.Warning);
+    }
+
+    private void DrawButton(string name, Action onClick)
+    {
+        if (GUILayout.Button(name))
+            onClick?.Invoke();
+    }
+
+    private void Indent(Action body)
+    {
+        EditorGUI.indentLevel++;
+        body();
+        EditorGUI.indentLevel--;
+    }
+
+    private void GUIToggle(bool enabled, Action body)
+    {
+        bool prev = GUI.enabled;
+        GUI.enabled = enabled;
+        body?.Invoke();
+        GUI.enabled = prev;
     }
 }
 #endif

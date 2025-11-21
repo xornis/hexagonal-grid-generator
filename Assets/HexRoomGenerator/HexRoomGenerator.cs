@@ -1,9 +1,19 @@
-using System.Collections.Generic;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace HexDungeon
 {
+    public interface IHexGenerator
+    {
+        IEnumerable<HexCoord> Generate(HexCoord start);
+    }
+
     public enum GenerationMode
     {
         Shapes,
@@ -12,100 +22,200 @@ namespace HexDungeon
 
     public class HexRoomGenerator : MonoBehaviour
     {
-        [Header("=== General ===")]
-        [SerializeField] private int radius = 2;
-        [SerializeField] private float hexDistance = 0.5f;
-        [SerializeField] private GameObject hexPrefab;
+        [SerializeField] private HexOrientation orientation = HexOrientation.FlatTop;
 
-        [Header("=== Generation ===")]
+        [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")]
+        private GameObject hexPrefab;
+        [SerializeField] private float hexScale = 1f;
+
+        [SerializeField] private float hexSize = 1f;
+
         [SerializeField] private GenerationMode mode;
 
-        [Header("=== Random Walk ===")]
         [SerializeField] private HexRandomGenerationType randomType;
         [SerializeField] private int rooms = 10;
-        
-        [Header("=== Shapes ===")]
+
         [SerializeField] private HexShapeType shapeType;
+        [SerializeField] private int radius = 2;
         [SerializeField] private int corridorThickness;
 
-        [Header("=== Debugging ===")]
-        [SerializeField, Tooltip("Works only in Play Mode")] private bool debugMode = false;
-        [SerializeField] private float debugStepDelay = 0.1f;
+#if UNITY_EDITOR
+        [SerializeField] private bool previewInEditor = true;
+        [SerializeField] private Color gizmoColor = Color.blue;
+        [SerializeField, Range(0.1f, 1.5f)] private float gizmoHexScale = 0.9f;
+#endif
+
+        [SerializeField] private bool debugMode = false;
+        [SerializeField, Tooltip("Works only in Play Mode")]
+        private float debugStepDelay = 0.1f;
         [SerializeField] private bool useSeed;
-        [SerializeField, Tooltip("Works only when useSeed is true")] private int seed;
+        [SerializeField, Tooltip("Works only when useSeed is true")]
+        private int seed;
 
         private void Start()
         {
-            if (debugMode) StartCoroutine(DebugGenerate());
+            if (debugMode)
+            {
+#if UNITY_EDITOR
+                EditorClearInternal();
+#endif
+                StartCoroutine(DebugGenerate());
+            }
             else Generate();
         }
 
-        private IEnumerable<HexCoord> GetGeneratedCoords()
+        private IHexGenerator CreateGenerator()
         {
-            if (mode == GenerationMode.Shapes)
-                return HexShapeGenerator.Generate(shapeType, HexCoord.Zero, radius, corridorThickness);
-            else 
-                return HexRandomizedGenerator.Generate(randomType, HexCoord.Zero, rooms);
+            switch (mode)
+            {
+                case GenerationMode.Shapes:
+                    return new HexShapeGenerator(shapeType, radius, corridorThickness);
+
+                case GenerationMode.Randomized:
+                    return new HexRandomizedGenerator(randomType, rooms);
+
+                default:
+                    throw new ArgumentOutOfRangeException($"Unknown generation mode: {mode}");
+            }
         }
 
         private void Generate()
         {
-            if (useSeed) Random.InitState(seed);
+            if (useSeed) UnityEngine.Random.InitState(seed);
 
-            HashSet<HexCoord> tiles = new HashSet<HexCoord>();
+            var layout = new HexLayout(orientation, hexSize);
+            var generator = CreateGenerator();
 
-            foreach (var hex in GetGeneratedCoords())
-            {
-                Vector3 pos = HexToWorld(hex, hexDistance);
-                Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-                tiles.Add(hex);
-            }
+            foreach (var hex in generator.Generate(HexCoord.Zero))
+                SpawnHex(layout, hex);
         }
 
         private IEnumerator DebugGenerate()
         {
-            if (useSeed) Random.InitState(seed);
-            
-            HashSet<HexCoord> tiles = new HashSet<HexCoord>();
+            if (useSeed) UnityEngine.Random.InitState(seed);
 
-            foreach (var hex in GetGeneratedCoords())
+            var layout = new HexLayout(orientation, hexSize);
+            var generator = CreateGenerator();
+
+            foreach (var hex in generator.Generate(HexCoord.Zero))
             {
-                Vector3 pos = HexToWorld(hex, hexDistance);
-                Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-                tiles.Add(hex);
+                SpawnHex(layout, hex);
                 yield return new WaitForSeconds(debugStepDelay);
             }
         }
 
-        private Vector3 HexToWorld(HexCoord h, float size)
+        private void SpawnHex(HexLayout layout, HexCoord hex)
         {
-            float x = size * (1.5f * h.Q);
-            float y = size * (Mathf.Sqrt(3) * (h.R + h.Q * 0.5f));      
-            return new Vector3(x, y, 0f);
+            if (hexPrefab == null) return;
+
+            Vector3 pos = layout.HexToWorld(hex);
+            var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
+            instance.transform.localScale = Vector3.one * hexScale;
         }
+
+
 
 #if UNITY_EDITOR
-        public void EditorGenerate()
+
+        private List<HexCoord> previewCache = new List<HexCoord>();
+        private bool previewDirty = true;
+
+        private void RebuildPreview()
         {
-            EditorClear();
-            Generate();
+            previewCache.Clear();
+            if (useSeed) UnityEngine.Random.InitState(seed);
+
+            var generator = CreateGenerator();
+
+            foreach (var hex in generator.Generate(HexCoord.Zero))
+                previewCache.Add(hex);
+
+            previewDirty = false;
         }
 
-        public void EditorClear()
+        private void OnDrawGizmosSelected()
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
+            if (!previewInEditor) return;
+            if (!enabled) return;
+
+            if (previewDirty)
+                RebuildPreview();
+
+            var layout = new HexLayout(orientation, hexSize);
+            Handles.color = gizmoColor;
+
+            foreach (var hex in previewCache)
+            {
+                Vector3 center = transform.TransformPoint(layout.HexToWorld(hex));
+                DrawHexHandle(center, layout, gizmoHexScale);
+            }
+        }
+
+        private void DrawHexHandle(Vector3 center, HexLayout layout, float scale)
+        {
+            float radius = layout.Size * scale;
+
+            float startAngle = orientation == HexOrientation.FlatTop ? 0f : 30f;
+
+            Vector3 firstPoint = Vector3.zero;
+
+            Vector3 prev = Vector3.zero;
+
+            for (int i = 0; i <= 6; i++)
+            {
+                float angleDeg = startAngle + i * 60f;
+                float angleRad = angleDeg * Mathf.Deg2Rad;
+
+                Vector3 point = center + new Vector3(
+                    Mathf.Cos(angleRad) * radius,
+                    Mathf.Sin(angleRad) * radius,
+                    0f
+                );
+
+                if (i == 0) firstPoint = point;
+                else Handles.DrawLine(prev, point);
+
+                prev = point;
+            }
+
+            Handles.DrawLine(prev, firstPoint);
+        }
+#endif
+
+#if UNITY_EDITOR
+
+        public void EditorGenerateInternal()
+        {
+            EditorClearInternal();
+            StopAllCoroutines();
+            if (Application.isPlaying) StartCoroutine(DebugGenerate());
+            else Generate();
+        }
+
+        public void EditorClearInternal()
+        {
+            StopAllCoroutines();
+            
+            for (int i = transform.childCount - 1; i >= 0; i--) 
                 DestroyImmediate(transform.GetChild(i).gameObject);
         }
 
-        public void EditorRandomizeSeed()
+        public void EditorForcePreviewRebuild()
         {
-            if (useSeed)
-                seed = Random.Range(int.MinValue, int.MaxValue);
+            previewDirty = true;
+            RebuildPreview();
+            SceneView.RepaintAll();
         }
-        public void EditorRandomizeSeedAndGenerate()
+
+        public void EditorClearPreviewInternal()
         {
-            EditorRandomizeSeed();
-            EditorGenerate();
+            previewCache.Clear();
+            SceneView.RepaintAll();
+        }
+
+        public void EditorRandomizeSeedInternal()
+        {
+            seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
 #endif
     }
