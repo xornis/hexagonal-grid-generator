@@ -22,47 +22,45 @@ namespace HexDungeon
 
     public class HexRoomGenerator : MonoBehaviour
     {
-        [Header("=== General ===")]
         [SerializeField] private HexOrientation orientation = HexOrientation.FlatTop;
 
-        [Header("=== Visual ===")]
         [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")]
         private GameObject hexPrefab;
         [SerializeField] private float hexScale = 1f;
 
-        [Header("=== Geometry ===")]
         [SerializeField] private float hexSize = 1f;
 
-        [Header("=== Generation ===")]
         [SerializeField] private GenerationMode mode;
 
-        [Header("=== Random Walk ===")]
         [SerializeField] private HexRandomGenerationType randomType;
         [SerializeField] private int rooms = 10;
 
-        [Header("=== Shapes ===")]
         [SerializeField] private HexShapeType shapeType;
         [SerializeField] private int radius = 2;
         [SerializeField] private int corridorThickness;
 
 #if UNITY_EDITOR
-        [Header("=== Preview / Gizmos ===")]
         [SerializeField] private bool previewInEditor = true;
         [SerializeField] private Color gizmoColor = Color.blue;
         [SerializeField, Range(0.1f, 1.5f)] private float gizmoHexScale = 0.9f;
 #endif
 
-        [Header("=== Debugging ===")]
+        [SerializeField] private bool debugMode = false;
         [SerializeField, Tooltip("Works only in Play Mode")]
-        private bool debugMode = false;
-        [SerializeField] private float debugStepDelay = 0.1f;
+        private float debugStepDelay = 0.1f;
         [SerializeField] private bool useSeed;
         [SerializeField, Tooltip("Works only when useSeed is true")]
         private int seed;
 
         private void Start()
         {
-            if (debugMode) StartCoroutine(DebugGenerate());
+            if (debugMode)
+            {
+#if UNITY_EDITOR
+                EditorClearInternal();
+#endif
+                StartCoroutine(DebugGenerate());
+            }
             else Generate();
         }
 
@@ -117,47 +115,7 @@ namespace HexDungeon
 
 
 
-
-
-
-
 #if UNITY_EDITOR
-
-
-        public void EditorGenerate()
-        {
-            EditorClear();
-            Generate();
-        }
-
-        public void EditorClear()
-        {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-                DestroyImmediate(transform.GetChild(i).gameObject);
-        }
-
-        public void EditorRandomizeSeed()
-        {
-            if (useSeed) seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            EditorForceRedraw();
-        }
-
-        public void EditorShowGizmosPreview()
-        {
-            previewDirty = true;
-            RebuildPreview();
-            EditorForceRedraw();
-        }
-
-        public void EditorClearPreview()
-        {
-            previewCache.Clear();
-            EditorForceRedraw();
-        }
-
-        public void EditorForceRedraw() => SceneView.RepaintAll();
-
-
 
         private List<HexCoord> previewCache = new List<HexCoord>();
         private bool previewDirty = true;
@@ -165,7 +123,6 @@ namespace HexDungeon
         private void RebuildPreview()
         {
             previewCache.Clear();
-
             if (useSeed) UnityEngine.Random.InitState(seed);
 
             var generator = CreateGenerator();
@@ -184,10 +141,7 @@ namespace HexDungeon
             if (previewDirty)
                 RebuildPreview();
 
-            if (previewCache.Count == 0) return;
-
             var layout = new HexLayout(orientation, hexSize);
-
             Handles.color = gizmoColor;
 
             foreach (var hex in previewCache)
@@ -225,6 +179,43 @@ namespace HexDungeon
             }
 
             Handles.DrawLine(prev, firstPoint);
+        }
+#endif
+
+#if UNITY_EDITOR
+
+        public void EditorGenerateInternal()
+        {
+            EditorClearInternal();
+            StopAllCoroutines();
+            if (Application.isPlaying) StartCoroutine(DebugGenerate());
+            else Generate();
+        }
+
+        public void EditorClearInternal()
+        {
+            StopAllCoroutines();
+            
+            for (int i = transform.childCount - 1; i >= 0; i--) 
+                DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+
+        public void EditorForcePreviewRebuild()
+        {
+            previewDirty = true;
+            RebuildPreview();
+            SceneView.RepaintAll();
+        }
+
+        public void EditorClearPreviewInternal()
+        {
+            previewCache.Clear();
+            SceneView.RepaintAll();
+        }
+
+        public void EditorRandomizeSeedInternal()
+        {
+            seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
 #endif
     }

@@ -295,11 +295,11 @@ MonoBehaviour:
   shapeType: 2
   radius: 2
   corridorThickness: 1
-  previewInEditor: 1
+  previewInEditor: 0
   gizmoColor: {r: 0, g: 1, b: 0, a: 1}
   gizmoHexScale: 0.75
   debugMode: 1
-  debugStepDelay: 1
+  debugStepDelay: 0
   useSeed: 1
   seed: 0
 --- !u!4 &742477495
