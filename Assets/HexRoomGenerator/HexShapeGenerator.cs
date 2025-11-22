@@ -24,23 +24,27 @@ namespace HexDungeon
 
         public IEnumerable<HexCoord> Generate(HexCoord start)
         {
+            HashSet<HexCoord> set = new HashSet<HexCoord>();
+
             switch (type)
             {
                 case HexShapeType.Disk:
-                    foreach (var hex in Disk(start, radius)) yield return hex;
+                    foreach (var hex in Disk(start, radius)) set.Add(hex);
                     break;
 
                 case HexShapeType.Ring:
-                    foreach (var hex in Ring(start, radius)) yield return hex;
+                    foreach (var hex in Ring(start, radius)) set.Add(hex);
                     break;
 
                 case HexShapeType.TwoRoomsWithCorridor:
-                    foreach (var hex in TwoRoomsWithCorridor(start, radius, corridorThickness)) yield return hex;
+                    foreach (var hex in TwoRoomsWithCorridor(start, radius, corridorThickness)) set.Add(hex);
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown generation type: {type}");
             }
+
+            return set;
         }
 
         private static IEnumerable<HexCoord> Disk(HexCoord center, int radius)
