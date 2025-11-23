@@ -159,7 +159,7 @@ MonoBehaviour:
   radius: 2
   corridorThickness: 1
   previewInEditor: 0
-  gizmoColor: {r: 1, g: 0, b: 0, a: 1}
+  gizmoColor: {r: 1, g: 1, b: 0, a: 1}
   gizmoHexScale: 0.75
   debugMode: 0
   hexGenerationDelay: 0.1
