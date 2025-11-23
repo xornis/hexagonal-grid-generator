@@ -11,7 +11,7 @@ This package provides procedural hex-grid generation for Unity in two modes:
 ----------------------------------------
 1) Drag the 'HexRoomGenerator.cs' component onto any GameObject.
 2) Assign a hex prefab in the "Visual" section.
-   (Use HexFlat or HexPointy from the Demo folder, or your own sprite.)
+   (Use HexFlat or HexPointy from the Prefab folder, or your own sprite.)
 3) Choose Generation Mode (Shapes / Randomized).
 4) Press:
 	* "Build/Rebuild Preview" (Preview Section) to see the generation preview.
@@ -78,7 +78,7 @@ GENERATION DEBUG
 ----------------------------------------
 
 If tiles overlap:
--> Check Hex Size and Hex Scale settings.
+-> Check Hex Size and Hex Scale parameters.
 If PointyTop looks "flat" or FlatTop looks "pointy":
 -> Rotate your sprite by 90 degrees.
 
