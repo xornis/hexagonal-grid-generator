@@ -93,7 +93,7 @@ public class HexRoomGeneratorEditor : Editor
 
             GUIToggle(isDebugMode, () =>
             {
-                DrawProp("debugStepDelay");
+                DrawProp("hexGenerationDelay");
 
                 EditorGUILayout.BeginHorizontal();
                 DrawButton("Build/Rebuild Generation", gen.EditorGenerateInternal);
