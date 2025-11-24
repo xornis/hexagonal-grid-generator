@@ -1,7 +1,7 @@
-HEX ROOM GENERATOR - QUICK START GUIDE
+HEXAGONAL CONSTRUCTOR - QUICK START GUIDE
 ======================================
 
-Thank you for downloading Hex Room Generator!
+Thank you for downloading Hexagonal Constructor!
 This package provides procedural hex-grid generation for Unity in two modes:
 * Shapes (Disk, Ring, Corridor, etc.)
 * Randomized (deterministic or random)

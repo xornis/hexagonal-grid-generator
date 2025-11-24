@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 742477495}
   - component: {fileID: 742477494}
   m_Layer: 0
-  m_Name: HexRoomGenDemo
+  m_Name: HexConstructorDemo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
