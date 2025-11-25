@@ -47,7 +47,7 @@ namespace HexDungeon
 
         [SerializeField] private bool debugMode = false;
         [SerializeField, Tooltip("Works only in Play Mode")]
-        private float debugStepDelay = 0.1f;
+        private float hexGenerationDelay = 0.1f;
         [SerializeField] private bool useSeed;
         [SerializeField, Tooltip("Works only when useSeed is true")]
         private int seed;
@@ -100,7 +100,7 @@ namespace HexDungeon
             foreach (var hex in generator.Generate(HexCoord.Zero))
             {
                 SpawnHex(layout, hex);
-                yield return new WaitForSeconds(debugStepDelay);
+                yield return new WaitForSeconds(hexGenerationDelay);
             }
         }
 
