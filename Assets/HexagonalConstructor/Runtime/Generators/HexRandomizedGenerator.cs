@@ -6,7 +6,8 @@ namespace HexDungeon
 {
     public enum HexRandomGenerationType
     {
-        RandomWalk
+        BranchWalk,
+        ClusterGrowth
     }
 
     public class HexRandomizedGenerator : IHexGenerator
@@ -24,8 +25,13 @@ namespace HexDungeon
         {
             switch (type)
             {
-                case HexRandomGenerationType.RandomWalk: 
-                    foreach (var hex in RandomWalk(start, desiredRoomCount))
+                case HexRandomGenerationType.BranchWalk: 
+                    foreach (var hex in BranchWalk(start, desiredRoomCount))
+                        yield return hex;
+                    break;
+
+                case HexRandomGenerationType.ClusterGrowth:
+                    foreach (var hex in ClusterGrowth(start, desiredRoomCount))
                         yield return hex;
                     break;
 
@@ -34,7 +40,39 @@ namespace HexDungeon
             }
         }
 
-        private static IEnumerable<HexCoord> RandomWalk(HexCoord start, int desiredRoomsCount)
+        private static IEnumerable<HexCoord> ClusterGrowth(HexCoord start, int desiredRoomCount)
+        {
+            HashSet<HexCoord> rooms = new HashSet<HexCoord>() { start };
+
+            for (int i = rooms.Count; i < desiredRoomCount;)
+            {
+                HexCoord current = GetRandomHex(rooms);
+
+                List<HexDirection> availableDirs = new List<HexDirection>();
+
+                for (int d = 0; d < 6; d++)
+                {
+                    var dir = (HexDirection)d;
+                    var next = current.Neighbor(dir);
+
+                    if (!rooms.Contains(next))
+                        availableDirs.Add(dir);
+                }
+
+                if (availableDirs.Count == 0) continue;
+
+                HexDirection rndDir = availableDirs[UnityEngine.Random.Range(0, availableDirs.Count)];
+                HexCoord nextHex = current.Neighbor(rndDir);
+
+                rooms.Add(nextHex);
+                i++;
+            }
+
+            foreach (var hex in rooms) 
+                yield return hex;
+        }
+
+        private static IEnumerable<HexCoord> BranchWalk(HexCoord start, int desiredRoomsCount)
         {
             HashSet<HexCoord> rooms = new HashSet<HexCoord>() { start };
 

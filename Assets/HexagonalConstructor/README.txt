@@ -38,7 +38,7 @@ GENERATION
 * Mode - choose generation mode
 
 RANDOMIZED
-* Random Type - currently supports RandomWalk
+* Random Type - types of randomized generations
 * Rooms - number of distinct rooms to generate
 * Use Seed - toggles deterministic generation
 * Seed - numeric seed for reproducible layouts
