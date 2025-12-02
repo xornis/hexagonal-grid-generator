@@ -51,7 +51,6 @@ namespace HexDungeon
 
         #region Disk, Ring
         [SerializeField] private int shapeRadius = 2;
-        [SerializeField] private int corridorThickness;
         #endregion Disk, Ring
 
         #region Spiral
@@ -94,7 +93,7 @@ namespace HexDungeon
             switch (mode)
             {
                 case GenerationMode.Shapes:
-                    return new HexShapeGenerator(shape, shapeRadius, corridorThickness, spiralLength, growthAmount, startDirection);
+                    return new HexShapeGenerator(shape, shapeRadius, spiralLength, growthAmount, startDirection);
 
                 case GenerationMode.Randomized:
                     return new HexRandomizedGenerator(randomAlgorithm, roomCount);
