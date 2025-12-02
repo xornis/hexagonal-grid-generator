@@ -23,16 +23,12 @@ public class HexRoomGeneratorEditor : Editor
     {
         serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
 
-        DrawSection("General", ref generalFoldout, "orientation");
-        DrawSection("Visual", ref visualFoldout, "hexPrefab", "hexScale");
-        DrawSection("Geometry", ref geometryFoldout, "hexSize");
+        DrawGeneralSection();
         DrawGenerationSection();
         DrawPreviewSection();
         DrawDebugSection();
 
         serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
-
-        EditorGUILayout.Space(20);
     }
 
     private void DrawGenerationSection()
@@ -48,11 +44,17 @@ public class HexRoomGeneratorEditor : Editor
             bool isRandom = modeProp.enumValueIndex == (int)GenerationMode.Randomized;
             bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
 
+            EditorGUILayout.Space(10);
+
             GUIToggle(isRandom, () =>
             DrawRandomizedSection(isRandom)); // Section is visible only when mode is Randomized
 
+            EditorGUILayout.Space(10);
+
             GUIToggle(isShapes, () =>
             DrawShapesSection(isShapes)); // Section is visible only when mode is Randomized
+
+            EditorGUILayout.Space(10);
         });
     }
 
@@ -77,6 +79,7 @@ public class HexRoomGeneratorEditor : Editor
                 DrawButton("Clear Preview", () => gen.EditorClearPreviewInternal());
                 EditorGUILayout.EndHorizontal();
             });
+            EditorGUILayout.Space(10);
         });
     }
 
@@ -100,6 +103,7 @@ public class HexRoomGeneratorEditor : Editor
                 DrawButton("Clear Generation", gen.EditorClearInternal);
                 EditorGUILayout.EndHorizontal();
             });
+            EditorGUILayout.Space(10);
         });
     }
 
@@ -131,8 +135,6 @@ public class HexRoomGeneratorEditor : Editor
                 EditorGUILayout.EndHorizontal();
             });
         });
-
-        EditorGUILayout.Space(10);
     }
 
     private void DrawShapesSection(bool isShaped)
@@ -152,18 +154,45 @@ public class HexRoomGeneratorEditor : Editor
         });
     }
 
-    private void DrawSection(string title, ref bool foldout, params string[] props)
+    private void DrawGeneralSection()
     {
-        foldout = EditorGUILayout.Foldout(foldout, title, true, EditorStyles.foldoutHeader);
-        if (!foldout) return;
+        generalFoldout = EditorGUILayout.Foldout(generalFoldout, "General", true, EditorStyles.foldoutHeader);
+        if (!generalFoldout) return;
 
         Indent(() =>
         {
-            foreach (var propName in props)
-                DrawProp(propName);
-        });
+            DrawVisualSection();
 
-        EditorGUILayout.Space(10);
+            EditorGUILayout.Space(10);
+
+            DrawGeometrySection();
+
+            EditorGUILayout.Space(10);
+        });
+    }
+
+    private void DrawVisualSection()
+    {
+        visualFoldout = EditorGUILayout.Foldout(visualFoldout, "Visual", true, EditorStyles.foldoutHeader);
+        if (!visualFoldout) return;
+
+        Indent(() =>
+        {
+            DrawProp("hexPrefab");
+            DrawProp("hexScale");
+        });
+    }
+
+    private void DrawGeometrySection()
+    {
+        geometryFoldout = EditorGUILayout.Foldout(geometryFoldout, "Geometry", true, EditorStyles.foldoutHeader);
+        if (!geometryFoldout) return;
+
+        Indent(() =>
+        {
+            DrawProp("orientation");
+            DrawProp("hexSize");
+        });
     }
 
     private void DrawProp(string name)
