@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace HexDungeon
 {
-    public enum HexShapeType
+    public enum HexShape
     {
         Disk, Ring, Spiral, TwoRoomsWithCorridor,
     }
 
     public class HexShapeGenerator : IHexGenerator
     {
-        private readonly HexShapeType type;
+        private readonly HexShape type;
         private readonly int radius;
         private readonly int corridorThickness;
 
@@ -19,7 +19,7 @@ namespace HexDungeon
         private readonly HexDirection startDirection;
         private readonly int growth;
 
-        public HexShapeGenerator(HexShapeType type, int radius, int corridorThickness, int hexCount, int growth, HexDirection startDirection)
+        public HexShapeGenerator(HexShape type, int radius, int corridorThickness, int hexCount, int growth, HexDirection startDirection)
         {
             this.type = type;
             this.radius = Mathf.Max(0, radius);
@@ -35,19 +35,19 @@ namespace HexDungeon
 
             switch (type)
             {
-                case HexShapeType.Disk:
+                case HexShape.Disk:
                     foreach (var hex in Disk(start, radius)) set.Add(hex);
                     break;
 
-                case HexShapeType.Ring:
+                case HexShape.Ring:
                     foreach (var hex in Ring(start, radius)) set.Add(hex);
                     break;
 
-                case HexShapeType.Spiral:
+                case HexShape.Spiral:
                     foreach (var hex in Spiral(start, hexCount, growth, startDirection)) set.Add(hex);
                     break;
 
-                case HexShapeType.TwoRoomsWithCorridor:
+                case HexShape.TwoRoomsWithCorridor:
                     foreach (var hex in TwoRoomsWithCorridor(start, radius, corridorThickness)) set.Add(hex);
                     break;
 

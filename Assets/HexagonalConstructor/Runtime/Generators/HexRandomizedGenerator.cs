@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HexDungeon
 {
-    public enum HexRandomGenerationType
+    public enum HexRandomGenerationAlgorithm
     {
         BranchWalk,
         ClusterGrowth
@@ -12,10 +12,10 @@ namespace HexDungeon
 
     public class HexRandomizedGenerator : IHexGenerator
     {
-        private readonly HexRandomGenerationType type;
+        private readonly HexRandomGenerationAlgorithm type;
         private readonly int desiredRoomCount;
 
-        public HexRandomizedGenerator(HexRandomGenerationType type, int desiredRoomCount)
+        public HexRandomizedGenerator(HexRandomGenerationAlgorithm type, int desiredRoomCount)
         {
             this.type = type;
             this.desiredRoomCount = Mathf.Max(1, desiredRoomCount);
@@ -25,12 +25,12 @@ namespace HexDungeon
         {
             switch (type)
             {
-                case HexRandomGenerationType.BranchWalk: 
+                case HexRandomGenerationAlgorithm.BranchWalk: 
                     foreach (var hex in BranchWalk(start, desiredRoomCount))
                         yield return hex;
                     break;
 
-                case HexRandomGenerationType.ClusterGrowth:
+                case HexRandomGenerationAlgorithm.ClusterGrowth:
                     foreach (var hex in ClusterGrowth(start, desiredRoomCount))
                         yield return hex;
                     break;

@@ -7,14 +7,17 @@ using UnityEngine;
 [CustomEditor(typeof(HexRoomGenerator))]
 public class HexRoomGeneratorEditor : Editor
 {
-    private bool generalFoldout = true;
-    private bool visualFoldout = true;
-    private bool geometryFoldout = true;
-    private bool generationFoldout = true;
-    private bool randomFoldout = true;
-    private bool shapesFoldout = true;
-    private bool previewFoldout = true;
-    private bool debugFoldout = true;
+    private bool gridSettingsFoldout = true;
+    private bool tileVisualsFoldout = true;
+    private bool tileGeometryFoldout = true;
+
+    private bool generationSettingsFoldout = true;
+    private bool randomGenerationFoldout = true;
+    private bool shapeGenerationFoldout = true;
+
+    private bool editorPreviewFoldout = true;
+    private bool generatorDebugFoldout = true;
+
     private HexRoomGenerator gen;
 
     private void OnEnable() => gen = (HexRoomGenerator)target;
@@ -23,101 +26,83 @@ public class HexRoomGeneratorEditor : Editor
     {
         serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
 
-        DrawSection("General", ref generalFoldout, "orientation");
-        DrawSection("Visual", ref visualFoldout, "hexPrefab", "hexScale");
-        DrawSection("Geometry", ref geometryFoldout, "hexSize");
-        DrawGenerationSection();
-        DrawPreviewSection();
-        DrawDebugSection();
+        DrawGridSettingsSection();
+        DrawGenerationSettingsSection();
+        DrawEditorPreviewSection();
+        DrawGeneratorDebugSection();
 
         serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
-
-        EditorGUILayout.Space(20);
     }
 
-    private void DrawGenerationSection()
-    {
-        generationFoldout = EditorGUILayout.Foldout(generationFoldout, "Generation", true, EditorStyles.foldoutHeader);
-        if (!generationFoldout) return;
+    #region Grid Settings
 
-        Indent(() =>
+    private void DrawGridSettingsSection()
+    {
+        DrawFoldout(ref gridSettingsFoldout, "Grid Settings", () =>
+        {
+            DrawTileVisualsSection();
+            DrawTileGeometrySection();
+        });
+    }
+
+    #region Tile Visuals
+    private void DrawTileVisualsSection()
+    {
+        DrawFoldout(ref tileVisualsFoldout, "Tile Visuals", () =>
+        {
+            DrawProp("hexPrefab");
+            DrawProp("hexScale");
+        });
+    }
+    #endregion Tile Visuals
+
+
+    #region Tile Geometry
+    private void DrawTileGeometrySection()
+    {
+        DrawFoldout(ref tileGeometryFoldout, "Tile Geometry", () =>
+        {
+            DrawProp("hexOrientation");
+            DrawProp("hexRadius");
+        });
+    }
+    #endregion Tile Geometry
+
+    #endregion Grid Settings
+
+
+    #region Generation Settings
+
+    private void DrawGenerationSettingsSection()
+    {
+        DrawFoldout(ref generationSettingsFoldout, "Generation Settings", () =>
         {
             var modeProp = serializedObject.FindProperty("mode");
             EditorGUILayout.PropertyField(modeProp);
 
-            bool isRandom = modeProp.enumValueIndex == (int)GenerationMode.Randomized;
+            bool isRandomized = modeProp.enumValueIndex == (int)GenerationMode.Randomized;
             bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
 
-            GUIToggle(isRandom, () =>
-            DrawRandomizedSection(isRandom)); // Section is visible only when mode is Randomized
+            EditorGUILayout.Space(6);
 
-            GUIToggle(isShapes, () =>
-            DrawShapesSection(isShapes)); // Section is visible only when mode is Randomized
+            if (isRandomized) DrawRandomGenerationSection(isRandomized); // Section is visible only when mode is Randomized
+            if (isShapes) DrawShapeGenerationSection(); // Section is visible only when mode is Randomized
         });
     }
 
-    private void DrawPreviewSection()
+    #region Random Generation
+    private void DrawRandomGenerationSection(bool isRandom)
     {
-        previewFoldout = EditorGUILayout.Foldout(previewFoldout, "Preview", true, EditorStyles.foldoutHeader);
-        if (!previewFoldout) return;
-
-        Indent(() =>
+        DrawFoldout(ref randomGenerationFoldout, "Random Generation", () =>
         {
-            var previewInEditorProp = serializedObject.FindProperty("previewInEditor");
-            EditorGUILayout.PropertyField(previewInEditorProp);
-            bool isPreviewInEditor = previewInEditorProp.boolValue;
-
-            GUIToggle(isPreviewInEditor, () =>
-            {
-                DrawProp("gizmoColor");
-                DrawProp("gizmoHexScale");
-
-                EditorGUILayout.BeginHorizontal();
-                DrawButton("Build/Rebuild Preview", () => gen.EditorForcePreviewRebuild());
-                DrawButton("Clear Preview", () => gen.EditorClearPreviewInternal());
-                EditorGUILayout.EndHorizontal();
-            });
-        });
-    }
-
-    private void DrawDebugSection()
-    {
-        debugFoldout = EditorGUILayout.Foldout(debugFoldout, "Debug", true, EditorStyles.foldoutHeader);
-        if (!debugFoldout) return;
-
-        Indent(() =>
-        {
-            var debugModeProp = serializedObject.FindProperty("debugMode");
-            EditorGUILayout.PropertyField(debugModeProp);
-            bool isDebugMode = debugModeProp.boolValue;
-
-            GUIToggle(isDebugMode, () =>
-            {
-                DrawProp("hexGenerationDelay");
-
-                EditorGUILayout.BeginHorizontal();
-                DrawButton("Build/Rebuild Generation", gen.EditorGenerateInternal);
-                DrawButton("Clear Generation", gen.EditorClearInternal);
-                EditorGUILayout.EndHorizontal();
-            });
-        });
-    }
-
-    private void DrawRandomizedSection(bool isRandom)
-    {
-        randomFoldout = EditorGUILayout.Foldout(randomFoldout, "Randomized", true, EditorStyles.foldoutHeader);
-        if (!randomFoldout) return;
-
-        Indent(() =>
-        {
-            DrawProp("randomType");
-            DrawProp("rooms");
+            DrawProp("randomAlgorithm");
+            DrawProp("roomCount");
 
             var useSeedProp = serializedObject.FindProperty("useSeed");
             EditorGUILayout.PropertyField(useSeedProp);
             bool isUsingSeed = useSeedProp.boolValue;
 
-            GUIToggle(isUsingSeed && isRandom, () =>
+            if (isUsingSeed && isRandom)
             {
                 EditorGUILayout.BeginHorizontal();
 
@@ -129,42 +114,76 @@ public class HexRoomGeneratorEditor : Editor
                 });
 
                 EditorGUILayout.EndHorizontal();
-            });
+            }
         });
-
-        EditorGUILayout.Space(10);
     }
+    #endregion Random Generation
 
-    private void DrawShapesSection(bool isShaped)
+    #region Shape Generation
+    private void DrawShapeGenerationSection()
     {
-        shapesFoldout = EditorGUILayout.Foldout(shapesFoldout, "Shapes", true, EditorStyles.foldoutHeader);
-        if (!shapesFoldout) return;
-
-        Indent(() =>
+        DrawFoldout(ref shapeGenerationFoldout, "Shape Generation", () =>
         {
-            var shapeTypeProp = serializedObject.FindProperty("shapeType");
+            var shapeTypeProp = serializedObject.FindProperty("shape");
             EditorGUILayout.PropertyField(shapeTypeProp);
 
-            bool useSpiralShape = shapeTypeProp.enumValueIndex == (int)HexShapeType.Spiral;
+            bool useSpiralShape = shapeTypeProp.enumValueIndex == (int)HexShape.Spiral;
 
-            DrawIf(!useSpiralShape, "radius");
-            DrawIf(useSpiralShape, "hexCount", "growth", "startDirection");
+            DrawIf(!useSpiralShape, "shapeRadius");
+            DrawIf(useSpiralShape, "spiralLength", "growthAmount", "startDirection");
         });
     }
+    #endregion Shape Generation
 
-    private void DrawSection(string title, ref bool foldout, params string[] props)
+    #endregion Generation Settings
+
+
+    #region Editor Preview
+    private void DrawEditorPreviewSection()
     {
-        foldout = EditorGUILayout.Foldout(foldout, title, true, EditorStyles.foldoutHeader);
-        if (!foldout) return;
-
-        Indent(() =>
+        DrawFoldout(ref editorPreviewFoldout, "Editor Preview", () =>
         {
-            foreach (var propName in props)
-                DrawProp(propName);
-        });
+            var enablePreviewProp = serializedObject.FindProperty("enablePreview");
+            EditorGUILayout.PropertyField(enablePreviewProp);
+            bool isEnablePreview = enablePreviewProp.boolValue;
 
-        EditorGUILayout.Space(10);
+            if (isEnablePreview)
+            {
+                DrawProp("previewColor");
+                DrawProp("previewHexScale");
+
+                EditorGUILayout.BeginHorizontal();
+                DrawButton("Rebuild Preview", gen.EditorForcePreviewRebuild);
+                DrawButton("Clear Preview", gen.EditorClearPreviewInternal);
+                EditorGUILayout.EndHorizontal();
+            }
+        });
     }
+    #endregion Editor Preview
+
+    #region Generator Debug
+    private void DrawGeneratorDebugSection()
+    {
+        DrawFoldout(ref generatorDebugFoldout, "Generator Debug", () =>
+        {
+            var debugModeProp = serializedObject.FindProperty("debugMode");
+            EditorGUILayout.PropertyField(debugModeProp);
+            bool isDebugMode = debugModeProp.boolValue;
+
+            if (isDebugMode)
+            {
+                DrawProp("stepDelay");
+
+                EditorGUILayout.BeginHorizontal();
+                DrawButton("Rebuild Generation", gen.EditorGenerateInternal);
+                DrawButton("Clear Generation", gen.EditorClearInternal);
+                EditorGUILayout.EndHorizontal();
+            }
+        });
+    }
+    #endregion Generator Debug
+
+    #region Editor Helpers
 
     private void DrawProp(string name)
     {
@@ -186,19 +205,21 @@ public class HexRoomGeneratorEditor : Editor
         EditorGUI.indentLevel--;
     }
 
-    private void GUIToggle(bool enabled, Action body)
-    {
-        bool prev = GUI.enabled;
-        GUI.enabled = enabled;
-        body?.Invoke();
-        GUI.enabled = prev;
-    }
-
     private void DrawIf(bool condition, params string[] names)
     {
         if (!condition) return;
         foreach (var p in names) DrawProp(p);
     }
 
+    private void DrawFoldout(ref bool state, string title, Action body)
+    {
+        state = EditorGUILayout.Foldout(state, title, true, EditorStyles.foldoutHeader);
+        if (!state) return;
+
+        Indent(body);
+        EditorGUILayout.Space(4);
+    }
+
+    #endregion Editor Helpers
 }
 #endif
