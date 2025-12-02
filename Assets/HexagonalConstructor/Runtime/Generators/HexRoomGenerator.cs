@@ -38,6 +38,7 @@ namespace HexDungeon
 
         #region Generation Settings
         [SerializeField] private GenerationMode mode;
+        [SerializeField, Tooltip("Axial coordinates (Q, R) of the starting hex. \nX = Q \nY = R")] private Vector2Int startAxial;
 
         #region Random Generation
         [SerializeField] private HexRandomGenerationAlgorithm randomAlgorithm;
@@ -110,7 +111,9 @@ namespace HexDungeon
             var layout = new HexLayout(hexOrientation, hexRadius);
             var generator = CreateGenerator();
 
-            foreach (var hex in generator.Generate(HexCoord.Zero))
+            HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
+
+            foreach (var hex in generator.Generate(startHex))
                 SpawnHex(layout, hex);
         }
 
@@ -121,7 +124,9 @@ namespace HexDungeon
             var layout = new HexLayout(hexOrientation, hexRadius);
             var generator = CreateGenerator();
 
-            foreach (var hex in generator.Generate(HexCoord.Zero))
+            HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
+
+            foreach (var hex in generator.Generate(startHex))
             {
                 SpawnHex(layout, hex);
                 yield return new WaitForSeconds(stepDelay);
@@ -151,7 +156,9 @@ namespace HexDungeon
 
             var generator = CreateGenerator();
 
-            foreach (var hex in generator.Generate(HexCoord.Zero))
+            HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
+
+            foreach (var hex in generator.Generate(startHex))
                 previewCache.Add(hex);
 
             previewDirty = false;
