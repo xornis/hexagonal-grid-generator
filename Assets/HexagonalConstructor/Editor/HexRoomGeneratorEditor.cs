@@ -79,6 +79,7 @@ public class HexRoomGeneratorEditor : Editor
         {
             var modeProp = serializedObject.FindProperty("mode");
             EditorGUILayout.PropertyField(modeProp);
+            DrawProp("startAxial");
 
             bool isRandomized = modeProp.enumValueIndex == (int)GenerationMode.Randomized;
             bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
