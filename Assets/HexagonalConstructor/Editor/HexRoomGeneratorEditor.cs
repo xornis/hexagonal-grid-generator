@@ -10,11 +10,14 @@ public class HexRoomGeneratorEditor : Editor
     private bool gridSettingsFoldout = true;
     private bool tileVisualsFoldout = true;
     private bool tileGeometryFoldout = true;
+
     private bool generationSettingsFoldout = true;
     private bool randomGenerationFoldout = true;
     private bool shapeGenerationFoldout = true;
+
     private bool editorPreviewFoldout = true;
     private bool generatorDebugFoldout = true;
+
     private HexRoomGenerator gen;
 
     private void OnEnable() => gen = (HexRoomGenerator)target;
@@ -45,14 +48,12 @@ public class HexRoomGeneratorEditor : Editor
             bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
 
             EditorGUILayout.Space(10);
-
-            GUIToggle(isRandomized, () =>
-            DrawRandomGenerationSection(isRandomized)); // Section is visible only when mode is Randomized
+            
+            if (isRandomized) DrawRandomGenerationSection(isRandomized); // Section is visible only when mode is Randomized
 
             EditorGUILayout.Space(10);
-
-            GUIToggle(isShapes, () =>
-            DrawShapeGenerationSection(isShapes)); // Section is visible only when mode is Randomized
+            
+            if (isShapes) DrawShapeGenerationSection(); // Section is visible only when mode is Randomized
 
             EditorGUILayout.Space(10);
         });
@@ -69,16 +70,16 @@ public class HexRoomGeneratorEditor : Editor
             EditorGUILayout.PropertyField(enablePreviewProp);
             bool isEnablePreview = enablePreviewProp.boolValue;
 
-            GUIToggle(isEnablePreview, () =>
+            if (isEnablePreview)
             {
                 DrawProp("previewColor");
                 DrawProp("previewHexScale");
 
                 EditorGUILayout.BeginHorizontal();
-                DrawButton("Build/Rebuild Preview", () => gen.EditorForcePreviewRebuild());
-                DrawButton("Clear Preview", () => gen.EditorClearPreviewInternal());
+                DrawButton("Rebuild Preview", gen.EditorForcePreviewRebuild);
+                DrawButton("Clear Preview", gen.EditorClearPreviewInternal);
                 EditorGUILayout.EndHorizontal();
-            });
+            }
             EditorGUILayout.Space(10);
         });
     }
@@ -94,15 +95,15 @@ public class HexRoomGeneratorEditor : Editor
             EditorGUILayout.PropertyField(debugModeProp);
             bool isDebugMode = debugModeProp.boolValue;
 
-            GUIToggle(isDebugMode, () =>
+            if (isDebugMode)
             {
                 DrawProp("stepDelay");
 
                 EditorGUILayout.BeginHorizontal();
-                DrawButton("Build/Rebuild Generation", gen.EditorGenerateInternal);
+                DrawButton("Rebuild Generation", gen.EditorGenerateInternal);
                 DrawButton("Clear Generation", gen.EditorClearInternal);
                 EditorGUILayout.EndHorizontal();
-            });
+            }
             EditorGUILayout.Space(10);
         });
     }
@@ -121,7 +122,7 @@ public class HexRoomGeneratorEditor : Editor
             EditorGUILayout.PropertyField(useSeedProp);
             bool isUsingSeed = useSeedProp.boolValue;
 
-            GUIToggle(isUsingSeed && isRandom, () =>
+            if (isUsingSeed && isRandom)
             {
                 EditorGUILayout.BeginHorizontal();
 
@@ -133,11 +134,11 @@ public class HexRoomGeneratorEditor : Editor
                 });
 
                 EditorGUILayout.EndHorizontal();
-            });
+            }
         });
     }
 
-    private void DrawShapeGenerationSection(bool isShaped)
+    private void DrawShapeGenerationSection()
     {
         shapeGenerationFoldout = EditorGUILayout.Foldout(shapeGenerationFoldout, "Shape Generation", true, EditorStyles.foldoutHeader);
         if (!shapeGenerationFoldout) return;
@@ -215,19 +216,10 @@ public class HexRoomGeneratorEditor : Editor
         EditorGUI.indentLevel--;
     }
 
-    private void GUIToggle(bool enabled, Action body)
-    {
-        bool prev = GUI.enabled;
-        GUI.enabled = enabled;
-        body?.Invoke();
-        GUI.enabled = prev;
-    }
-
     private void DrawIf(bool condition, params string[] names)
     {
         if (!condition) return;
         foreach (var p in names) DrawProp(p);
     }
-
 }
 #endif
