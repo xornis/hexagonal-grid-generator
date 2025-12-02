@@ -153,15 +153,15 @@ MonoBehaviour:
   hexScale: 1.85
   hexSize: 1
   mode: 1
-  randomType: 0
-  rooms: 150
+  randomType: 1
+  rooms: 1000
   shapeType: 2
   radius: 2
   corridorThickness: 1
   previewInEditor: 0
   gizmoColor: {r: 1, g: 1, b: 0, a: 1}
   gizmoHexScale: 0.75
-  debugMode: 0
+  debugMode: 1
   hexGenerationDelay: 0.1
   useSeed: 0
   seed: -1021954311

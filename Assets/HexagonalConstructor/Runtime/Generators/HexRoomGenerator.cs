@@ -22,35 +22,60 @@ namespace HexDungeon
 
     public class HexRoomGenerator : MonoBehaviour
     {
-        [SerializeField] private HexOrientation orientation = HexOrientation.FlatTop;
+        #region General
 
-        [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")]
-        private GameObject hexPrefab;
+        #region Visual
+        [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")] private GameObject hexPrefab;
         [SerializeField] private float hexScale = 1f;
+        #endregion Visual
 
+        #region Geometry
+        [SerializeField] private HexOrientation orientation = HexOrientation.FlatTop;
         [SerializeField] private float hexSize = 1f;
+        #endregion Geometry
 
+        #endregion General
+
+        #region Generation
         [SerializeField] private GenerationMode mode;
 
+        #region Randomized
         [SerializeField] private HexRandomGenerationType randomType;
-        [SerializeField] private int rooms = 10;
+        [SerializeField] private int rooms = 100;
+        [SerializeField] private bool useSeed;
+        [SerializeField, Tooltip("Works only when useSeed is true")] private int seed;
+        #endregion Randomized
 
+        #region Shapes
         [SerializeField] private HexShapeType shapeType;
+
+        #region Disk, Ring
         [SerializeField] private int radius = 2;
         [SerializeField] private int corridorThickness;
+        #endregion Disk, Ring
+
+        #region Spiral
+        [SerializeField] private int hexCount = 200;
+        [SerializeField] private HexDirection startDirection;
+        [SerializeField] private int growth = 1;
+        #endregion Spiral
+
+        #endregion Shapes
+
+        #endregion Generation
 
 #if UNITY_EDITOR
+        #region Preview
         [SerializeField] private bool previewInEditor = true;
         [SerializeField] private Color gizmoColor = Color.blue;
         [SerializeField, Range(0.1f, 1.5f)] private float gizmoHexScale = 0.9f;
+        #endregion Preview
 #endif
 
+        #region Debug 
         [SerializeField] private bool debugMode = false;
-        [SerializeField, Tooltip("Works only in Play Mode")]
-        private float hexGenerationDelay = 0.1f;
-        [SerializeField] private bool useSeed;
-        [SerializeField, Tooltip("Works only when useSeed is true")]
-        private int seed;
+        [SerializeField, Tooltip("Works only in Play Mode")] private float hexGenerationDelay = 0.1f;
+        #endregion Debug
 
         private void Start()
         {
@@ -69,7 +94,7 @@ namespace HexDungeon
             switch (mode)
             {
                 case GenerationMode.Shapes:
-                    return new HexShapeGenerator(shapeType, radius, corridorThickness);
+                    return new HexShapeGenerator(shapeType, radius, corridorThickness, hexCount, growth, startDirection);
 
                 case GenerationMode.Randomized:
                     return new HexRandomizedGenerator(randomType, rooms);

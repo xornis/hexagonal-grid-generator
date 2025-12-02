@@ -49,10 +49,10 @@ public class HexRoomGeneratorEditor : Editor
             bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
 
             GUIToggle(isRandom, () =>
-            DrawRandomSection(isRandom)); // Section is visible only when mode is Randomized
+            DrawRandomizedSection(isRandom)); // Section is visible only when mode is Randomized
 
             GUIToggle(isShapes, () =>
-            DrawSection("Shapes", ref shapesFoldout, "shapeType", "radius", "corridorThickness")); // Section is visible only when mode is Randomized
+            DrawShapesSection(isShapes)); // Section is visible only when mode is Randomized
         });
     }
 
@@ -103,9 +103,9 @@ public class HexRoomGeneratorEditor : Editor
         });
     }
 
-    private void DrawRandomSection(bool isRandom)
+    private void DrawRandomizedSection(bool isRandom)
     {
-        randomFoldout = EditorGUILayout.Foldout(randomFoldout, "Random", true, EditorStyles.foldoutHeader);
+        randomFoldout = EditorGUILayout.Foldout(randomFoldout, "Randomized", true, EditorStyles.foldoutHeader);
         if (!randomFoldout) return;
 
         Indent(() =>
@@ -133,6 +133,23 @@ public class HexRoomGeneratorEditor : Editor
         });
 
         EditorGUILayout.Space(10);
+    }
+
+    private void DrawShapesSection(bool isShaped)
+    {
+        shapesFoldout = EditorGUILayout.Foldout(shapesFoldout, "Shapes", true, EditorStyles.foldoutHeader);
+        if (!shapesFoldout) return;
+
+        Indent(() =>
+        {
+            var shapeTypeProp = serializedObject.FindProperty("shapeType");
+            EditorGUILayout.PropertyField(shapeTypeProp);
+
+            bool useSpiralShape = shapeTypeProp.enumValueIndex == (int)HexShapeType.Spiral;
+
+            DrawIf(!useSpiralShape, "radius");
+            DrawIf(useSpiralShape, "hexCount", "growth", "startDirection");
+        });
     }
 
     private void DrawSection(string title, ref bool foldout, params string[] props)
@@ -176,5 +193,12 @@ public class HexRoomGeneratorEditor : Editor
         body?.Invoke();
         GUI.enabled = prev;
     }
+
+    private void DrawIf(bool condition, params string[] names)
+    {
+        if (!condition) return;
+        foreach (var p in names) DrawProp(p);
+    }
+
 }
 #endif

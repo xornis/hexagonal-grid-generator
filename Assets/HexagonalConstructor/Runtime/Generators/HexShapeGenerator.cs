@@ -6,7 +6,7 @@ namespace HexDungeon
 {
     public enum HexShapeType
     {
-        Disk, Ring, TwoRoomsWithCorridor,
+        Disk, Ring, Spiral, TwoRoomsWithCorridor,
     }
 
     public class HexShapeGenerator : IHexGenerator
@@ -15,11 +15,18 @@ namespace HexDungeon
         private readonly int radius;
         private readonly int corridorThickness;
 
-        public HexShapeGenerator(HexShapeType type, int radius, int corridorThickness)
+        private readonly int hexCount;
+        private readonly HexDirection startDirection;
+        private readonly int growth;
+
+        public HexShapeGenerator(HexShapeType type, int radius, int corridorThickness, int hexCount, int growth, HexDirection startDirection)
         {
             this.type = type;
             this.radius = Mathf.Max(0, radius);
             this.corridorThickness = Mathf.Max(1, corridorThickness);
+            this.hexCount = Mathf.Max(1, hexCount);
+            this.growth = Mathf.Max(1, growth);
+            this.startDirection = startDirection;
         }
 
         public IEnumerable<HexCoord> Generate(HexCoord start)
@@ -36,6 +43,10 @@ namespace HexDungeon
                     foreach (var hex in Ring(start, radius)) set.Add(hex);
                     break;
 
+                case HexShapeType.Spiral:
+                    foreach (var hex in Spiral(start, hexCount, growth, startDirection)) set.Add(hex);
+                    break;
+
                 case HexShapeType.TwoRoomsWithCorridor:
                     foreach (var hex in TwoRoomsWithCorridor(start, radius, corridorThickness)) set.Add(hex);
                     break;
@@ -47,22 +58,22 @@ namespace HexDungeon
             return set;
         }
 
-        private static IEnumerable<HexCoord> Disk(HexCoord center, int radius)
+        private static IEnumerable<HexCoord> Disk(HexCoord start, int radius)
         {
             for (int dq = -radius; dq <= radius; dq++)
             {
                 for (int dr = Mathf.Max(-radius, -dq - radius); dr <= Mathf.Min(radius, -dq + radius); dr++)
                 {
-                    yield return new HexCoord(center.Q + dq, center.R + dr);
+                    yield return new HexCoord(start.Q + dq, start.R + dr);
                 }
             }
         }
 
-        private static IEnumerable<HexCoord> Ring(HexCoord center, int radius)
+        private static IEnumerable<HexCoord> Ring(HexCoord start, int radius)
         {
             if (radius <= 0)
             {
-                yield return center;
+                yield return start;
                 yield break;
             }
             
@@ -71,11 +82,38 @@ namespace HexDungeon
                 for (int dr = Mathf.Max(-radius, -dq - radius);
                     dr <= Mathf.Min(radius, -dq + radius); dr++)
                 {
-                    var hex = new HexCoord(center.Q + dq, center.R + dr);
+                    var hex = new HexCoord(start.Q + dq, start.R + dr);
 
-                    if (center.Distance(hex) == radius)
+                    if (start.Distance(hex) == radius)
                         yield return hex;
                 } 
+            }
+        }
+
+        private static IEnumerable<HexCoord> Spiral(HexCoord start, int hexCount, int growth, HexDirection startDirection)
+        {
+            HexCoord current = start;
+            yield return current;
+
+            HexDirection direction = startDirection;
+
+            int segmentLength = Mathf.Max(1, growth);
+            int hexesPlaced = 1;
+            const int RepeatSides = 3;
+
+            while (hexesPlaced < hexCount)
+            {
+                for (int sides = 0; sides < RepeatSides; sides++)
+                {
+                    for (int i = 0; i < segmentLength && hexesPlaced < hexCount; i++)
+                    {
+                        current = current.Neighbor(direction);
+                        yield return current;
+                        hexesPlaced++;
+                    }
+                    direction = direction.Next();
+                } 
+                segmentLength += growth;
             }
         }
 
