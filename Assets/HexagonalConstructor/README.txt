@@ -1,21 +1,23 @@
+======================================
 HEXAGONAL CONSTRUCTOR - QUICK START GUIDE
 ======================================
 
 Thank you for downloading Hexagonal Constructor!
 This package provides procedural hex-grid generation for Unity in two modes:
-* Shapes (Disk, Ring, Corridor, etc.)
+* Shapes (Disk, Ring, etc.)
 * Randomized (deterministic or random)
 
 ----------------------------------------
 1. Getting Started
 ----------------------------------------
+
 1) Drag the 'HexRoomGenerator.cs' component onto any GameObject.
-2) Assign a hex prefab in the "Visual" section.
-   (Use HexFlat or HexPointy from the Prefab folder, or your own sprite.)
+2) Assign a hex prefab in the "Tile Visuals" section.
+   (Use HexFlat or HexPointy from the "Prefabs" folder, or your own sprite.)
 3) Choose Generation Mode (Shapes / Randomized).
 4) Press:
-	* "Build/Rebuild Preview" (Preview Section) to see the generation preview.
-	* or "Build/Rebuild Generation" (Debug section) to see real generated GameObjects.
+	* "Rebuild Preview" (Editor Preview Section) to see the generation preview.
+	* or "Rebuild Generation" (Generator Debug Section) to see real generated GameObjects.
 	* or turn on Debug Mode to see the generation building one-by-one in Play Mode.
 
 The generator will generate hex tiles as children of the GameObject.
@@ -24,45 +26,44 @@ The generator will generate hex tiles as children of the GameObject.
 2. Inspector Parameters
 ----------------------------------------
 
-GENERAL
-* Orientation - FlatTop or PointyTop (affects grid math, NOT sprite rotation)
+GRID SETTINGS
+	TILE VISUALS
+		* Hex Prefab - prefab containing SpriteRenderer
+		* Hex Scale - visual scale applied to spawned prefabs, scale of the prefab
 
-VISUAL
-* Hex Prefab - prefab containing SpriteRenderer
-* Hex Scale - visual scale applied to spawned prefabs, scale of the prefab
+	TILE GEOMETRY
+		* Hex Orientation - FlatTop or PointyTop (affects grid math, NOT sprite rotation)
+		* Hex Radius - hex radius used in hex-to-world conversion
 
-GEOMETRY
-* Hex Size - hex radius used in hex-to-world conversion
-
-GENERATION
-* Mode - choose generation mode
-
-RANDOMIZED
-* Random Type - types of randomized generations
-* Rooms - number of distinct rooms to generate
-* Use Seed - toggles deterministic generation
-* Seed - numeric seed for reproducible layouts
-* Randomize - creates a pseudo-random numeric seed
-
-SHAPES
-* Shape Type - Disk, Ring, Two Rooms + Corridor, etc.
-* Radius - size of the shape
-* Corridor Thickness - width for corridor-type shapes
+GENERATION SETTINGS
+	* Mode - choose generation mode
+	* Start Axial - axial coordinates of the starting hex in the generator
+	
+	RANDOM GENERATION
+		* Random Algorithm - algorithms of random generations
+		* Room Count - number of distinct rooms to generate
+		* Use Seed - toggles deterministic generation
+		* Seed - numeric seed for reproducible layouts
+		* Randomize - creates a pseudo-random numeric seed
+	
+	SHAPE GENERATION
+		* Shape - Disk, Ring, etc.
+		* Shape Radius - size of the shape
 
 ----------------------------------------
 3. Editor Tools
 ----------------------------------------
 
-GENERATION PREVIEW
-* Preview In Editor - toggles this section and preview
-* Build/Rebuild Preview - preview layout before generating
-* Clear Preview - clears cached preview
+EDITOR PREVIEW
+	* Enable Preview - toggles this section and preview
+	* Rebuild Preview - preview layout before generating
+	* Clear Preview - clears cached preview
 
-GENERATION DEBUG
-* Debug Mode - toggles this section
-* Hex Generation Delay - delay of generating hexes one-by-one
-* Build/Rebuild Generation - creates hex tiles in the Scene
-* Clear Generation - removes generated tiles
+GENERATOR DEBUG
+	* Debug Mode - toggles this section
+	* Step Delay - delay of generating hexes one-by-one
+	* Rebuild Generation - creates hex tiles in the Scene
+	* Clear Generation - removes generated tiles
 
 ----------------------------------------
 4. Notes
@@ -78,9 +79,9 @@ GENERATION DEBUG
 ----------------------------------------
 
 If tiles overlap:
--> Check Hex Size and Hex Scale parameters.
+	* Check Hex Radius and Hex Scale parameters.
 If PointyTop looks "flat" or FlatTop looks "pointy":
--> Rotate your sprite by 90 degrees.
+	* Rotate your sprite by 90 degrees.
 
 ----------------------------------------
 === Enjoy building hex-based levels! ===
