@@ -148,23 +148,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620da3779448e7e4c95561bb3f4427ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orientation: 0
-  hexPrefab: {fileID: 367564799919000248, guid: d824d8627b2547744bcf39e995b47b47, type: 3}
-  hexScale: 1.85
-  hexSize: 1
+  hexPrefab: {fileID: 5268574295593296186, guid: 8f46c1e10cd0e9b4a89a002ceaaae0d7, type: 3}
+  hexScale: 2
+  hexOrientation: 1
+  hexRadius: 1
   mode: 1
-  randomType: 1
-  rooms: 1000
-  shapeType: 2
-  radius: 2
-  corridorThickness: 1
-  previewInEditor: 0
-  gizmoColor: {r: 1, g: 1, b: 0, a: 1}
-  gizmoHexScale: 0.75
+  startAxial: {x: 0, y: 0}
+  randomAlgorithm: 0
+  roomCount: 1000
+  useSeed: 1
+  seed: 1834386650
+  shape: 0
+  shapeRadius: 8
+  spiralLength: 200
+  growthAmount: 2
+  startDirection: 5
+  enablePreview: 1
+  previewColor: {r: 1, g: 1, b: 0, a: 1}
+  previewHexScale: 0.8
   debugMode: 1
-  hexGenerationDelay: 0.1
-  useSeed: 0
-  seed: -1021954311
+  stepDelay: 0.1
 --- !u!4 &742477495
 Transform:
   m_ObjectHideFlags: 0
@@ -241,7 +244,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 25
+  orthographic size: 40
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
