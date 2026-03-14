@@ -6,7 +6,7 @@ namespace HexDungeon
 {
     public enum HexShape
     {
-        Disk, Ring, Spiral,
+        Disk, Ring, Spiral, Triangle
     }
 
     public class HexShapeGenerator : IHexGenerator
@@ -45,6 +45,10 @@ namespace HexDungeon
                     foreach (var hex in Spiral(start, hexCount, growth, startDirection)) set.Add(hex);
                     break;
 
+                case HexShape.Triangle:
+                    foreach (var hex in Triangle(start, radius)) set.Add(hex);
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown generation type: {type}");
             }
@@ -70,7 +74,7 @@ namespace HexDungeon
                 yield return start;
                 yield break;
             }
-            
+
             for (int dq = -radius; dq <= radius; dq++)
             {
                 for (int dr = Mathf.Max(-radius, -dq - radius);
@@ -80,7 +84,7 @@ namespace HexDungeon
 
                     if (start.Distance(hex) == radius)
                         yield return hex;
-                } 
+                }
             }
         }
 
@@ -106,8 +110,33 @@ namespace HexDungeon
                         hexesPlaced++;
                     }
                     direction = direction.Next();
-                } 
+                }
                 segmentLength += growth;
+            }
+        }
+
+        private static IEnumerable<HexCoord> Triangle(HexCoord start, int sideLength)
+        {
+            yield return start;
+
+            HexCoord current = start;
+            HexDirection direction = HexDirection.East;
+
+            int segmentLength = 1;
+
+            for (int layer = 1; layer <= sideLength; layer++)
+            {
+                current = current.Neighbor(direction);
+                int stepsThisLayer = layer == sideLength ? segmentLength - 1 : segmentLength;
+
+                for (int step = 0; step < stepsThisLayer; step++)
+                {
+                    yield return current;
+                    if (step < stepsThisLayer - 1)
+                        current = current.Neighbor(direction);
+                }
+                direction = direction.Next().Next();
+                segmentLength++;
             }
         }
     }
