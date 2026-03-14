@@ -6,22 +6,24 @@ namespace HexDungeon
 {
     public enum HexShape
     {
-        Disk, Ring, Spiral,
+        Disk, Ring, Spiral, Triangle
     }
 
     public class HexShapeGenerator : IHexGenerator
     {
         private readonly HexShape type;
         private readonly int radius;
+        private readonly int sideLength;
 
         private readonly int hexCount;
         private readonly HexDirection startDirection;
         private readonly int growth;
 
-        public HexShapeGenerator(HexShape type, int radius, int hexCount, int growth, HexDirection startDirection)
+        public HexShapeGenerator(HexShape type, int radius, int sideLength, int hexCount, int growth, HexDirection startDirection)
         {
             this.type = type;
             this.radius = Mathf.Max(0, radius);
+            this.sideLength = Mathf.Max(1, sideLength);
             this.hexCount = Mathf.Max(1, hexCount);
             this.growth = Mathf.Max(1, growth);
             this.startDirection = startDirection;
@@ -43,6 +45,10 @@ namespace HexDungeon
 
                 case HexShape.Spiral:
                     foreach (var hex in Spiral(start, hexCount, growth, startDirection)) set.Add(hex);
+                    break;
+
+                case HexShape.Triangle:
+                    foreach (var hex in Triangle(start, sideLength)) set.Add(hex);
                     break;
 
                 default:
@@ -70,7 +76,7 @@ namespace HexDungeon
                 yield return start;
                 yield break;
             }
-            
+
             for (int dq = -radius; dq <= radius; dq++)
             {
                 for (int dr = Mathf.Max(-radius, -dq - radius);
@@ -80,7 +86,7 @@ namespace HexDungeon
 
                     if (start.Distance(hex) == radius)
                         yield return hex;
-                } 
+                }
             }
         }
 
@@ -106,8 +112,33 @@ namespace HexDungeon
                         hexesPlaced++;
                     }
                     direction = direction.Next();
-                } 
+                }
                 segmentLength += growth;
+            }
+        }
+
+        private static IEnumerable<HexCoord> Triangle(HexCoord start, int sideLength)
+        {
+            yield return start;
+
+            HexCoord current = start;
+            HexDirection direction = HexDirection.East;
+
+            int segmentLength = 1;
+
+            for (int layer = 1; layer <= sideLength; layer++)
+            {
+                current = current.Neighbor(direction);
+                int stepsThisLayer = layer == sideLength ? segmentLength - 1 : segmentLength;
+
+                for (int step = 0; step < stepsThisLayer; step++)
+                {
+                    yield return current;
+                    if (step < stepsThisLayer - 1)
+                        current = current.Neighbor(direction);
+                }
+                direction = direction.Next().Next();
+                segmentLength++;
             }
         }
     }
