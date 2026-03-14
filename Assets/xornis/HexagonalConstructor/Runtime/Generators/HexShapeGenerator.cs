@@ -13,15 +13,17 @@ namespace HexDungeon
     {
         private readonly HexShape type;
         private readonly int radius;
+        private readonly int sideLength;
 
         private readonly int hexCount;
         private readonly HexDirection startDirection;
         private readonly int growth;
 
-        public HexShapeGenerator(HexShape type, int radius, int hexCount, int growth, HexDirection startDirection)
+        public HexShapeGenerator(HexShape type, int radius, int sideLength, int hexCount, int growth, HexDirection startDirection)
         {
             this.type = type;
             this.radius = Mathf.Max(0, radius);
+            this.sideLength = Mathf.Max(1, sideLength);
             this.hexCount = Mathf.Max(1, hexCount);
             this.growth = Mathf.Max(1, growth);
             this.startDirection = startDirection;
@@ -46,7 +48,7 @@ namespace HexDungeon
                     break;
 
                 case HexShape.Triangle:
-                    foreach (var hex in Triangle(start, radius)) set.Add(hex);
+                    foreach (var hex in Triangle(start, sideLength)) set.Add(hex);
                     break;
 
                 default:

@@ -60,6 +60,10 @@ namespace HexDungeon
         [SerializeField] private HexDirection startDirection;
         #endregion Spiral
 
+        #region Triangle
+        [SerializeField] private int triangleSideLength = 4;
+        #endregion Triangle
+
         #endregion Shape Generation
 
         #endregion Generation Settings
@@ -94,7 +98,7 @@ namespace HexDungeon
             switch (mode)
             {
                 case GenerationMode.Shapes:
-                    return new HexShapeGenerator(shape, shapeRadius, spiralLength, growthAmount, startDirection);
+                    return new HexShapeGenerator(shape, shapeRadius, triangleSideLength, spiralLength, growthAmount, startDirection);
 
                 case GenerationMode.Randomized:
                     return new HexRandomizedGenerator(randomAlgorithm, roomCount);

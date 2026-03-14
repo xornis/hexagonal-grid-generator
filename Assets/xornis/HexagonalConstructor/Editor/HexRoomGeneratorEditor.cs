@@ -130,9 +130,11 @@ namespace HexDungeon
                 EditorGUILayout.PropertyField(shapeTypeProp);
 
                 bool useSpiralShape = shapeTypeProp.enumValueIndex == (int)HexShape.Spiral;
+                bool useTriangleShape = shapeTypeProp.enumValueIndex == (int)HexShape.Triangle;
 
-                DrawIf(!useSpiralShape, "shapeRadius");
                 DrawIf(useSpiralShape, "spiralLength", "growthAmount", "startDirection");
+                DrawIf(useTriangleShape, "triangleSideLength");
+                DrawIf(!useSpiralShape && !useTriangleShape, "shapeRadius");
             });
         }
         #endregion Shape Generation
