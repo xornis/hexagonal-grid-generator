@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace HexDungeon
 {
     [System.Serializable]
-    public class RingGenerator : IHexGenerator
+    public class RingGenerator : SerializableHexGenerator
     {
         [SerializeField, Min(1)] private int radius = 4;
 
-        public IEnumerable<HexCoord> Generate(HexCoord start)
+        public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
             for (int dq = -radius; dq <= radius; dq++)
             {

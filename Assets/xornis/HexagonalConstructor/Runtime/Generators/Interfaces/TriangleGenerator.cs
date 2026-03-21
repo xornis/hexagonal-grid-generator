@@ -4,11 +4,11 @@ using UnityEngine;
 namespace HexDungeon
 {
     [System.Serializable]
-    public class TriangleGenerator : IHexGenerator
+    public class TriangleGenerator : SerializableHexGenerator
     {
         [SerializeField, Min(1)] private int sideLength = 3;
 
-        public IEnumerable<HexCoord> Generate(HexCoord start)
+        public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
             yield return start;
 

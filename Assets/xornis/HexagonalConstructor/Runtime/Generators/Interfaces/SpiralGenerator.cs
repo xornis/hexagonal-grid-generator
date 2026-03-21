@@ -4,13 +4,13 @@ using UnityEngine;
 namespace HexDungeon
 {
     [System.Serializable]
-    public class SpiralGenerator : IHexGenerator
+    public class SpiralGenerator : SerializableHexGenerator
     {
-        [SerializeField, Min(1)] private int hexCount;
-        [SerializeField] private HexDirection startDirection;
-        [SerializeField, Min(1)] private int growth;
+        [SerializeField, Min(1)] private int spiralLength = 50;
+        [SerializeField] private HexDirection startDirection = HexDirection.NorthWest;
+        [SerializeField, Min(1)] private int growth = 1;
 
-        public IEnumerable<HexCoord> Generate(HexCoord start)
+        public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
             HexCoord current = start;
             yield return current;
@@ -20,11 +20,11 @@ namespace HexDungeon
             int segmentLength = Mathf.Max(1, growth);
             int hexesPlaced = 1;
 
-            while (hexesPlaced < hexCount)
+            while (hexesPlaced < spiralLength)
             {
                 for (int sides = 0; sides < 3; sides++)
                 {
-                    for (int i = 0; i < segmentLength && hexesPlaced < hexCount; i++)
+                    for (int i = 0; i < segmentLength && hexesPlaced < spiralLength; i++)
                     {
                         current = current.Neighbor(direction);
                         yield return current;
