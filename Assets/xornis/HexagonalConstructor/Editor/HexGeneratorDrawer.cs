@@ -8,7 +8,7 @@ using UnityEngine;
 namespace HexDungeon
 {
     [CustomPropertyDrawer(typeof(SerializableHexGenerator), true)]
-    public class HexGeneratorBaseDrawer : PropertyDrawer
+    public class HexGeneratorDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
