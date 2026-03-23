@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HexDungeon
 {
     [System.Serializable]
-    public class SpiralGenerator : SerializableHexGenerator
+    public class SpiralGenerator : ShapeGenerator
     {
         [SerializeField, Min(1)] private int spiralLength = 50;
         [SerializeField] private HexDirection startDirection = HexDirection.NorthWest;

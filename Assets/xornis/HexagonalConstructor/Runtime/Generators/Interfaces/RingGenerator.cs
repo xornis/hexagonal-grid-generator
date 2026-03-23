@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace HexDungeon
 {
     [System.Serializable]
-    public class RingGenerator : SerializableHexGenerator
+    public class RingGenerator : ShapeGenerator
     {
         [SerializeField, Min(1)] private int radius = 4;
 

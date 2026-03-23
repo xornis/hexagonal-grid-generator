@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HexDungeon
 {
     [System.Serializable]
-    public class TriangleGenerator : SerializableHexGenerator
+    public class TriangleGenerator : ShapeGenerator
     {
         [SerializeField, Min(1)] private int sideLength = 3;
 
