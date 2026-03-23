@@ -82,39 +82,13 @@ namespace HexDungeon
 
                 EditorGUILayout.Space(6);
 
-                var generatorProp = serializedObject.FindProperty("generator");
+                var generationModeProp = serializedObject.FindProperty("generationMode");
+                var generatorProp = generationModeProp.enumValueIndex == (int)GenerationMode.Shapes ? serializedObject.FindProperty("shapeGenerator") : serializedObject.FindProperty("randomizedGenerator");
+
+                EditorGUILayout.PropertyField(generationModeProp, true);
                 EditorGUILayout.PropertyField(generatorProp, true);
             });
         }
-
-        #region Random Generation
-        private void DrawRandomGenerationSection(bool isRandom)
-        {
-            DrawFoldout(ref randomGenerationFoldout, "Random Generation", () =>
-            {
-                DrawProp("randomAlgorithm");
-                DrawProp("roomCount");
-
-                var useSeedProp = serializedObject.FindProperty("useSeed");
-                EditorGUILayout.PropertyField(useSeedProp);
-                bool isUsingSeed = useSeedProp.boolValue;
-
-                if (isUsingSeed && isRandom)
-                {
-                    EditorGUILayout.BeginHorizontal();
-
-                    DrawProp("seed");
-                    DrawButton("Randomize", () =>
-                    {
-                        gen.EditorRandomizeSeedInternal();
-                        serializedObject.ApplyModifiedProperties();
-                    });
-
-                    EditorGUILayout.EndHorizontal();
-                }
-            });
-        }
-        #endregion Random Generation
 
         #endregion Generation Settings
 

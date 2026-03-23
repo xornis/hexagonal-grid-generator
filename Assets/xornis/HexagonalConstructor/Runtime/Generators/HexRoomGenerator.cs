@@ -14,6 +14,11 @@ namespace HexDungeon
         IEnumerable<HexCoord> Generate(HexCoord start);
     }
 
+    public enum GenerationMode
+    {
+        Shapes, Randomized
+    };
+    
     public class HexRoomGenerator : MonoBehaviour
     {
         #region Grid Settings
@@ -33,14 +38,9 @@ namespace HexDungeon
         #region Generation Settings
         [SerializeField, Tooltip("Axial coordinates (Q, R) of the starting hex. \nX = Q \nY = R")] private Vector2Int startAxial;
 
-        #region Random Generation
-        [SerializeField] private HexRandomGenerationAlgorithm randomAlgorithm;
-        [SerializeField] private int roomCount = 100;
-        [SerializeField] private bool useSeed;
-        [SerializeField, Tooltip("Works only when useSeed is true")] private int seed;
-        #endregion Random Generation
-
-        [SerializeReference] private SerializableHexGenerator generator;
+        [SerializeField] private GenerationMode generationMode;
+        [SerializeReference] private ShapeGenerator shapeGenerator;
+        [SerializeReference] private RandomizedGenerator randomizedGenerator;
 
         #endregion Generation Settings
 
@@ -69,17 +69,18 @@ namespace HexDungeon
             else Generate();
         }
 
-        private void Reset()
+        private SerializableHexGenerator CreateGenerator()
         {
-            generator = new DiskGenerator();
+            switch (generationMode)
+            {
+                case GenerationMode.Shapes: return shapeGenerator;
+                case GenerationMode.Randomized: return randomizedGenerator;
+                default: return null;
+            }
         }
-
-        private IHexGenerator CreateGenerator() => generator;
 
         private void Generate()
         {
-            if (useSeed) UnityEngine.Random.InitState(seed);
-
             var layout = new HexLayout(hexOrientation, hexRadius);
             var gen = CreateGenerator();
 
@@ -91,8 +92,6 @@ namespace HexDungeon
 
         private IEnumerator DebugGenerate()
         {
-            if (useSeed) UnityEngine.Random.InitState(seed);
-
             var layout = new HexLayout(hexOrientation, hexRadius);
             var gen = CreateGenerator();
 
@@ -123,20 +122,19 @@ namespace HexDungeon
 
         private void RebuildPreview()
         {
-            if (generator == null)
+            if (CreateGenerator() == null)
             {
                 previewDirty = false;
                 return;
             }
 
             previewCache.Clear();
-            if (useSeed) UnityEngine.Random.InitState(seed);
 
             var gen = CreateGenerator();
 
             HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
 
-            foreach (var hex in generator.Generate(startHex))
+            foreach (var hex in CreateGenerator().Generate(startHex))
                 previewCache.Add(hex);
         }
 
@@ -222,7 +220,7 @@ namespace HexDungeon
 
         public void EditorRandomizeSeedInternal()
         {
-            seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            randomizedGenerator.RandomizeSeed();
         }
 #endif
     }

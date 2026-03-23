@@ -25,7 +25,7 @@ namespace HexDungeon
         private void ShowTypeMenu(SerializedProperty property, Rect buttonRect)
         {
             var menu = new GenericMenu();
-            foreach (var type in GetGeneratorTypes())
+            foreach (var type in GetGeneratorTypes(property))
                 menu.AddItem(new GUIContent(type.Name), false, () =>
                 {
                     property.managedReferenceValue = Activator.CreateInstance(type);
@@ -65,11 +65,16 @@ namespace HexDungeon
             }
         }
 
-        private Type[] GetGeneratorTypes()
+        private Type[] GetGeneratorTypes(SerializedProperty property)
         {
+            bool isShape = typeof(ShapeGenerator).IsAssignableFrom(fieldInfo.FieldType);
+
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
-                .Where(t => typeof(SerializableHexGenerator).IsAssignableFrom(t) && !t.IsAbstract)
+                .Where(t => (isShape 
+                    ? typeof(ShapeGenerator) 
+                    : typeof(RandomizedGenerator))
+                    .IsAssignableFrom(t) && !t.IsAbstract)
                 .ToArray();
         }
 
