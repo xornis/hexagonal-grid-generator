@@ -42,6 +42,8 @@ namespace HexDungeon
         [SerializeReference] private ShapeGenerator shapeGenerator;
         [SerializeReference] private RandomizedGenerator randomizedGenerator;
 
+        private SerializableHexGenerator currentGenerator;
+
         #endregion Generation Settings
 
 #if UNITY_EDITOR
@@ -57,6 +59,11 @@ namespace HexDungeon
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
         #endregion Generator Debug
 
+        private void Awake()
+        {
+            currentGenerator = CreateGenerator();
+        }
+        
         private void Start()
         {
             if (debugMode)
@@ -82,22 +89,20 @@ namespace HexDungeon
         private void Generate()
         {
             var layout = new HexLayout(hexOrientation, hexRadius);
-            var gen = CreateGenerator();
 
             HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
 
-            foreach (var hex in gen.Generate(startHex))
+            foreach (var hex in currentGenerator.Generate(startHex))
                 SpawnHex(layout, hex);
         }
 
         private IEnumerator DebugGenerate()
         {
             var layout = new HexLayout(hexOrientation, hexRadius);
-            var gen = CreateGenerator();
 
             HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
 
-            foreach (var hex in gen.Generate(startHex))
+            foreach (var hex in currentGenerator.Generate(startHex))
             {
                 SpawnHex(layout, hex);
                 yield return new WaitForSeconds(stepDelay);
@@ -122,7 +127,9 @@ namespace HexDungeon
 
         private void RebuildPreview()
         {
-            if (CreateGenerator() == null)
+            var previewGen = CreateGenerator();
+
+            if (previewGen == null)
             {
                 previewDirty = false;
                 return;
@@ -130,11 +137,9 @@ namespace HexDungeon
 
             previewCache.Clear();
 
-            var gen = CreateGenerator();
-
             HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
 
-            foreach (var hex in CreateGenerator().Generate(startHex))
+            foreach (var hex in previewGen.Generate(startHex))
                 previewCache.Add(hex);
         }
 

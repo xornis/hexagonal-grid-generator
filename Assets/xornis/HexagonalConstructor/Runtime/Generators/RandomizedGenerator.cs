@@ -9,9 +9,23 @@ namespace HexDungeon
         [SerializeField] protected bool useSeed;
         [SerializeField, Tooltip("Works only when useSeed is true")] protected int seed;
 
-        protected static HashSet<HexCoord> rooms = new HashSet<HexCoord>();
+        protected HashSet<HexCoord> rooms = new HashSet<HexCoord>();
 
-        protected static HexCoord GetNextStep(HexCoord current, HexCoord? previous)
+        public override IEnumerable<HexCoord> Generate(HexCoord start)
+        {
+            rooms.Clear();
+            RandomizeSeed();
+            rooms.Add(start);
+            
+            ExecuteAlgorithm(start);
+
+            foreach (var hex in rooms)
+                yield return hex;
+        }
+
+        protected abstract void ExecuteAlgorithm(HexCoord start);
+
+        protected HexCoord GetNextStep(HexCoord current, HexCoord? previous, HashSet<HexCoord> rooms)
         {
             List<HexDirection> availableDirs = new List<HexDirection>();
 
@@ -32,7 +46,7 @@ namespace HexDungeon
             return current.Neighbor(rndDir);
         }
 
-        protected static HexCoord GetRandomHex(HashSet<HexCoord> set)
+        protected HexCoord GetRandomHex(HashSet<HexCoord> set)
         {
             int index = Random.Range(0, set.Count);
 
@@ -42,6 +56,9 @@ namespace HexDungeon
             return HexCoord.Zero;
         }
 
-        public void RandomizeSeed() => Random.InitState(seed);
+        public void RandomizeSeed()
+        {
+            if (useSeed) Random.InitState(seed);
+        }
     }
 }

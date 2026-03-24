@@ -5,10 +5,8 @@ namespace HexDungeon
     [System.Serializable]
     public class ClusterGrowthGenerator : RandomizedGenerator
     {
-        public override IEnumerable<HexCoord> Generate(HexCoord start)
+        protected override void ExecuteAlgorithm(HexCoord start)
         {
-            rooms.Add(start);
-
             for (int i = rooms.Count; i < hexCount;)
             {
                 HexCoord current = GetRandomHex(rooms);
@@ -32,9 +30,6 @@ namespace HexDungeon
                 rooms.Add(nextHex);
                 i++;
             }
-
-            foreach (var hex in rooms)
-                yield return hex;
         }
     }
 }

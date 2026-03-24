@@ -6,7 +6,7 @@ namespace HexDungeon
     [System.Serializable]
     public class TriangleGenerator : ShapeGenerator
     {
-        [SerializeField, Min(1)] private int sideLength = 3;
+        [SerializeField, Min(2)] private int sideLength = 3;
 
         public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
