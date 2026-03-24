@@ -78,66 +78,20 @@ namespace HexDungeon
         {
             DrawFoldout(ref generationSettingsFoldout, "Generation Settings", () =>
             {
-                var modeProp = serializedObject.FindProperty("mode");
-                EditorGUILayout.PropertyField(modeProp);
                 DrawProp("startAxial");
-
-                bool isRandomized = modeProp.enumValueIndex == (int)GenerationMode.Randomized;
-                bool isShapes = modeProp.enumValueIndex == (int)GenerationMode.Shapes;
 
                 EditorGUILayout.Space(6);
 
-                if (isRandomized) DrawRandomGenerationSection(isRandomized); // Section is visible only when mode is Randomized
-                if (isShapes) DrawShapeGenerationSection(); // Section is visible only when mode is Randomized
+                var generationModeProp = serializedObject.FindProperty("generationMode");
+                bool isGenerationRandomized = generationModeProp.enumValueIndex == (int)GenerationMode.Randomized;
+                var generatorProp = isGenerationRandomized ? "randomizedGenerator" : "shapeGenerator";
+
+                DrawProp("generationMode");
+                DrawProp(generatorProp);
+
+                DrawButton("Randomize Seed", gen.EditorRandomizeSeedInternal);
             });
         }
-
-        #region Random Generation
-        private void DrawRandomGenerationSection(bool isRandom)
-        {
-            DrawFoldout(ref randomGenerationFoldout, "Random Generation", () =>
-            {
-                DrawProp("randomAlgorithm");
-                DrawProp("roomCount");
-
-                var useSeedProp = serializedObject.FindProperty("useSeed");
-                EditorGUILayout.PropertyField(useSeedProp);
-                bool isUsingSeed = useSeedProp.boolValue;
-
-                if (isUsingSeed && isRandom)
-                {
-                    EditorGUILayout.BeginHorizontal();
-
-                    DrawProp("seed");
-                    DrawButton("Randomize", () =>
-                    {
-                        gen.EditorRandomizeSeedInternal();
-                        serializedObject.ApplyModifiedProperties();
-                    });
-
-                    EditorGUILayout.EndHorizontal();
-                }
-            });
-        }
-        #endregion Random Generation
-
-        #region Shape Generation
-        private void DrawShapeGenerationSection()
-        {
-            DrawFoldout(ref shapeGenerationFoldout, "Shape Generation", () =>
-            {
-                var shapeTypeProp = serializedObject.FindProperty("shape");
-                EditorGUILayout.PropertyField(shapeTypeProp);
-
-                bool useSpiralShape = shapeTypeProp.enumValueIndex == (int)HexShape.Spiral;
-                bool useTriangleShape = shapeTypeProp.enumValueIndex == (int)HexShape.Triangle;
-
-                DrawIf(useSpiralShape, "spiralLength", "growthAmount", "startDirection");
-                DrawIf(useTriangleShape, "triangleSideLength");
-                DrawIf(!useSpiralShape && !useTriangleShape, "shapeRadius");
-            });
-        }
-        #endregion Shape Generation
 
         #endregion Generation Settings
 
@@ -192,7 +146,7 @@ namespace HexDungeon
         private void DrawProp(string name)
         {
             var prop = serializedObject.FindProperty(name);
-            if (prop != null) EditorGUILayout.PropertyField(prop);
+            if (prop != null) EditorGUILayout.PropertyField(prop, true);
             else EditorGUILayout.HelpBox($"Property '{name}' not found", MessageType.Warning);
         }
 
