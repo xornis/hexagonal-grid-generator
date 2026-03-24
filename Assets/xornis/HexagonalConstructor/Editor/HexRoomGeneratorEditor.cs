@@ -83,10 +83,13 @@ namespace HexDungeon
                 EditorGUILayout.Space(6);
 
                 var generationModeProp = serializedObject.FindProperty("generationMode");
-                var generatorProp = generationModeProp.enumValueIndex == (int)GenerationMode.Shapes ? serializedObject.FindProperty("shapeGenerator") : serializedObject.FindProperty("randomizedGenerator");
+                bool isGenerationRandomized = generationModeProp.enumValueIndex == (int)GenerationMode.Randomized;
+                var generatorProp = isGenerationRandomized ? "randomizedGenerator" : "shapeGenerator";
 
-                EditorGUILayout.PropertyField(generationModeProp, true);
-                EditorGUILayout.PropertyField(generatorProp, true);
+                DrawProp("generationMode");
+                DrawProp(generatorProp);
+
+                DrawButton("Randomize Seed", gen.EditorRandomizeSeedInternal);
             });
         }
 
