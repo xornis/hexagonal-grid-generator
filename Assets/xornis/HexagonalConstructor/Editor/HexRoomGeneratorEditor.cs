@@ -13,15 +13,18 @@ namespace HexDungeon
         private bool tileGeometryFoldout = true;
 
         private bool generationSettingsFoldout = true;
-        private bool randomGenerationFoldout = true;
-        private bool shapeGenerationFoldout = true;
 
         private bool editorPreviewFoldout = true;
         private bool generatorDebugFoldout = true;
 
-        private HexRoomGenerator gen;
-
-        private void OnEnable() => gen = (HexRoomGenerator)target;
+        private HexRoomGenerator mainGen;
+        private HexRoomGeneratorPreview helper;
+        
+        private void OnEnable()
+        {
+            mainGen = (HexRoomGenerator)target;
+            helper = mainGen.GetComponent<HexRoomGeneratorPreview>();
+        }
 
         public override void OnInspectorGUI()
         {
@@ -89,7 +92,7 @@ namespace HexDungeon
                 DrawProp("generationMode");
                 DrawProp(generatorProp);
 
-                DrawButton("Randomize Seed", gen.EditorRandomizeSeedInternal);
+                //DrawButton("Randomize Seed", EditorRandomizeSeedInternal);
             });
         }
 
@@ -101,18 +104,18 @@ namespace HexDungeon
         {
             DrawFoldout(ref editorPreviewFoldout, "Editor Preview", () =>
             {
-                var enablePreviewProp = serializedObject.FindProperty("enablePreview");
-                EditorGUILayout.PropertyField(enablePreviewProp);
-                bool isEnablePreview = enablePreviewProp.boolValue;
+                var previewIsActiveProp = serializedObject.FindProperty("previewIsActive");
+                EditorGUILayout.PropertyField(previewIsActiveProp);
+                bool previewIsActivePropValue = previewIsActiveProp.boolValue;
 
-                if (isEnablePreview)
+                if (previewIsActivePropValue)
                 {
-                    DrawProp("previewColor");
+                    DrawProp("previewHexColor");
                     DrawProp("previewHexScale");
 
                     EditorGUILayout.BeginHorizontal();
-                    DrawButton("Rebuild Preview", gen.EditorForcePreviewRebuild);
-                    DrawButton("Clear Preview", gen.EditorClearPreviewInternal);
+                    DrawButton("Rebuild Preview", helper.EditorForcePreviewRebuild);
+                    DrawButton("Clear Preview", helper.EditorClearPreviewInternal);
                     EditorGUILayout.EndHorizontal();
                 }
             });
@@ -133,8 +136,8 @@ namespace HexDungeon
                     DrawProp("stepDelay");
 
                     EditorGUILayout.BeginHorizontal();
-                    DrawButton("Rebuild Generation", gen.EditorGenerateInternal);
-                    DrawButton("Clear Generation", gen.EditorClearInternal);
+                    DrawButton("Rebuild Generation", mainGen.EditorGenerateInternal);
+                    DrawButton("Clear Generation", mainGen.EditorClearInternal);
                     EditorGUILayout.EndHorizontal();
                 }
             });

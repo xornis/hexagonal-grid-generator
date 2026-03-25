@@ -1,24 +1,14 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace HexDungeon
 {
-    public interface IHexGenerator
-    {
-        IEnumerable<HexCoord> Generate(HexCoord start);
-    }
-
     public enum GenerationMode
     {
         Shapes, Randomized
     };
-    
+
     public class HexRoomGenerator : MonoBehaviour
     {
         #region Grid Settings
@@ -39,17 +29,22 @@ namespace HexDungeon
         [SerializeField, Tooltip("Axial coordinates (Q, R) of the starting hex. \nX = Q \nY = R")] private Vector2Int startAxial;
 
         [SerializeField] private GenerationMode generationMode;
-        [SerializeReference] private ShapeGenerator shapeGenerator;
-        [SerializeReference] private RandomizedGenerator randomizedGenerator;
+        [SerializeField, SerializeReference] private ShapeGenerator shapeGenerator;
+        [SerializeField, SerializeReference] private RandomizedGenerator randomizedGenerator;
 
-        private SerializableHexGenerator currentGenerator;
+        public SerializableHexGenerator CurrentGenerator
+        {
+            get => generationMode == GenerationMode.Randomized 
+                ? randomizedGenerator
+                : shapeGenerator;
+        }
 
         #endregion Generation Settings
 
 #if UNITY_EDITOR
         #region Editor Preview
-        [SerializeField] private bool enablePreview = true;
-        [SerializeField] private Color previewColor = Color.blue;
+        [SerializeField] private bool previewIsActive = true;
+        [SerializeField] private Color previewHexColor = Color.blue;
         [SerializeField, Range(0.1f, 1.5f)] private float previewHexScale = 0.9f;
         #endregion Editor Preview
 #endif
@@ -59,11 +54,6 @@ namespace HexDungeon
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
         #endregion Generator Debug
 
-        private void Awake()
-        {
-            currentGenerator = CreateGenerator();
-        }
-        
         private void Start()
         {
             if (debugMode)
@@ -76,124 +66,31 @@ namespace HexDungeon
             else Generate();
         }
 
-        private SerializableHexGenerator CreateGenerator()
-        {
-            switch (generationMode)
-            {
-                case GenerationMode.Shapes: return shapeGenerator;
-                case GenerationMode.Randomized: return randomizedGenerator;
-                default: return null;
-            }
-        }
-
         private void Generate()
         {
-            var layout = new HexLayout(hexOrientation, hexRadius);
-
-            HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
-
-            foreach (var hex in currentGenerator.Generate(startHex))
-                SpawnHex(layout, hex);
+            foreach (var hex in CurrentGenerator.Generate(GetGeneratorSettings.startHex))
+                SpawnHex(hex);
         }
 
         private IEnumerator DebugGenerate()
         {
-            var layout = new HexLayout(hexOrientation, hexRadius);
-
-            HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
-
-            foreach (var hex in currentGenerator.Generate(startHex))
+            foreach (var hex in CurrentGenerator.Generate(GetGeneratorSettings.startHex))
             {
-                SpawnHex(layout, hex);
+                SpawnHex(hex);
                 yield return new WaitForSeconds(stepDelay);
             }
         }
 
-        private void SpawnHex(HexLayout layout, HexCoord hex)
+        private void SpawnHex(HexCoord hex)
         {
             if (hexPrefab == null) return;
 
-            Vector3 pos = layout.HexToWorld(hex);
+            Vector3 pos = GetGeneratorSettings.hexLayout.HexToWorld(hex);
             var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
             instance.transform.localScale = Vector3.one * hexScale;
         }
 
-
-
 #if UNITY_EDITOR
-
-        private List<HexCoord> previewCache = new List<HexCoord>();
-        private bool previewDirty = true;
-
-        private void RebuildPreview()
-        {
-            var previewGen = CreateGenerator();
-
-            if (previewGen == null)
-            {
-                previewDirty = false;
-                return;
-            }
-
-            previewCache.Clear();
-
-            HexCoord startHex = new HexCoord(startAxial.x, startAxial.y);
-
-            foreach (var hex in previewGen.Generate(startHex))
-                previewCache.Add(hex);
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            if (!enablePreview) return;
-            if (!enabled) return;
-
-            if (previewDirty)
-                RebuildPreview();
-
-            var layout = new HexLayout(hexOrientation, hexRadius);
-            Handles.color = previewColor;
-
-            foreach (var hex in previewCache)
-            {
-                Vector3 center = transform.TransformPoint(layout.HexToWorld(hex));
-                DrawHexHandle(center, layout, previewHexScale);
-            }
-        }
-
-        private void DrawHexHandle(Vector3 center, HexLayout layout, float scale)
-        {
-            float radius = layout.Size * scale;
-
-            float startAngle = hexOrientation == HexOrientation.FlatTop ? 0f : 30f;
-
-            Vector3 firstPoint = Vector3.zero;
-
-            Vector3 prev = Vector3.zero;
-
-            for (int i = 0; i <= 6; i++)
-            {
-                float angleDeg = startAngle + i * 60f;
-                float angleRad = angleDeg * Mathf.Deg2Rad;
-
-                Vector3 point = center + new Vector3(
-                    Mathf.Cos(angleRad) * radius,
-                    Mathf.Sin(angleRad) * radius,
-                    0f
-                );
-
-                if (i == 0) firstPoint = point;
-                else Handles.DrawLine(prev, point);
-
-                prev = point;
-            }
-
-            Handles.DrawLine(prev, firstPoint);
-        }
-#endif
-
-#if UNITY_EDITOR
-
         public void EditorGenerateInternal()
         {
             EditorClearInternal();
@@ -205,28 +102,47 @@ namespace HexDungeon
         public void EditorClearInternal()
         {
             StopAllCoroutines();
-            
-            for (int i = transform.childCount - 1; i >= 0; i--) 
+
+            for (int i = transform.childCount - 1; i >= 0; i--)
                 DestroyImmediate(transform.GetChild(i).gameObject);
         }
 
-        public void EditorForcePreviewRebuild()
+        public struct PreviewSettings
         {
-            previewDirty = true;
-            RebuildPreview();
-            SceneView.RepaintAll();
+            public bool previewIsActive;
+            public Color hexColor;
+            public float hexScale;
+        }
+        
+        public struct GeneratorSettings
+        {
+            public HexLayout hexLayout;
+            public HexCoord startHex;
+            public float hexScale;
+            public HexOrientation hexOrientation;
         }
 
-        public void EditorClearPreviewInternal()
+        public PreviewSettings GetPreviewSettings
         {
-            previewCache.Clear();
-            SceneView.RepaintAll();
-        }
-
-        public void EditorRandomizeSeedInternal()
-        {
-            randomizedGenerator.RandomizeSeed();
+            get => new PreviewSettings
+            {
+                 previewIsActive = previewIsActive,
+                 hexColor = previewHexColor,
+                 hexScale = previewHexScale
+            };
         }
 #endif
+
+        public GeneratorSettings GetGeneratorSettings
+        {
+            get => new GeneratorSettings
+            {
+                hexLayout = new HexLayout(hexOrientation, hexRadius),
+                startHex = new HexCoord(startAxial.x, startAxial.y),
+                hexScale = hexScale,
+                hexOrientation = hexOrientation
+            };
+        }
     }
+
 }

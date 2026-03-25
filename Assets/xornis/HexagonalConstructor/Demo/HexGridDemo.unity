@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 151163235}
   - component: {fileID: 151163234}
+  - component: {fileID: 151163236}
   m_Layer: 0
   m_Name: HexConstructorDemo
   m_TagString: Untagged
@@ -153,26 +154,27 @@ MonoBehaviour:
   hexOrientation: 1
   hexRadius: 1
   startAxial: {x: 0, y: 0}
-  randomAlgorithm: 0
-  roomCount: 1000
-  useSeed: 0
-  seed: 1834386650
-  generator:
-    rid: 499084208233250951
-  enablePreview: 1
-  previewColor: {r: 0, g: 0, b: 0, a: 1}
+  generationMode: 1
+  shapeGenerator:
+    rid: -2
+  randomizedGenerator:
+    rid: 499084304547053638
+  previewIsActive: 1
+  previewHexColor: {r: 0, g: 0, b: 0, a: 1}
   previewHexScale: 0.8
   debugMode: 1
   stepDelay: 0.1
   references:
     version: 2
     RefIds:
-    - rid: 499084208233250951
-      type: {class: SpiralGenerator, ns: HexDungeon, asm: Assembly-CSharp}
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 499084304547053638
+      type: {class: BranchWalkGenerator, ns: HexDungeon, asm: Assembly-CSharp}
       data:
-        spiralLength: 50
-        startDirection: 5
-        growth: 1
+        hexCount: 72
+        useSeed: 1
+        seed: 0
 --- !u!4 &151163235
 Transform:
   m_ObjectHideFlags: 0
@@ -188,6 +190,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &151163236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d03a54c4f848e6145a8e5f897635f8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1984249227
 GameObject:
   m_ObjectHideFlags: 0
