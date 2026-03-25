@@ -106,13 +106,7 @@ namespace HexDungeon
             for (int i = transform.childCount - 1; i >= 0; i--)
                 DestroyImmediate(transform.GetChild(i).gameObject);
         }
-
-        public struct PreviewSettings
-        {
-            public bool previewIsActive;
-            public Color hexColor;
-            public float hexScale;
-        }
+#endif
         
         public struct GeneratorSettings
         {
@@ -120,18 +114,11 @@ namespace HexDungeon
             public HexCoord startHex;
             public float hexScale;
             public HexOrientation hexOrientation;
-        }
 
-        public PreviewSettings GetPreviewSettings
-        {
-            get => new PreviewSettings
-            {
-                 previewIsActive = previewIsActive,
-                 hexColor = previewHexColor,
-                 hexScale = previewHexScale
-            };
+            public bool previewIsActive;
+            public Color previewHexColor;
+            public float previewHexScale;
         }
-#endif
 
         public GeneratorSettings GetGeneratorSettings
         {
@@ -140,7 +127,11 @@ namespace HexDungeon
                 hexLayout = new HexLayout(hexOrientation, hexRadius),
                 startHex = new HexCoord(startAxial.x, startAxial.y),
                 hexScale = hexScale,
-                hexOrientation = hexOrientation
+                hexOrientation = hexOrientation,
+
+                previewIsActive = previewIsActive,
+                previewHexColor = previewHexColor,
+                previewHexScale = previewHexScale
             };
         }
     }

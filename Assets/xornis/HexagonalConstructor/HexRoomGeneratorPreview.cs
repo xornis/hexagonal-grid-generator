@@ -36,26 +36,26 @@ namespace HexDungeon
 
         private void OnDrawGizmosSelected()
         {
-            if (!target.GetPreviewSettings.previewIsActive) return;
+            if (!target.GetGeneratorSettings.previewIsActive) return;
             if (!enabled) return;
 
             if (previewDirty)
                 RebuildPreview();
 
-            Handles.color = target.GetPreviewSettings.hexColor;
+            Handles.color = target.GetGeneratorSettings.previewHexColor;
 
             foreach (var hex in previewCache)
             {
                 Vector3 center = transform.TransformPoint(target.GetGeneratorSettings.hexLayout.HexToWorld(hex));
-                DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, target.GetPreviewSettings.hexScale);
+                DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, target.GetGeneratorSettings.previewHexScale, target.GetGeneratorSettings.hexOrientation);
             }
         }
 
-        private void DrawHexHandle(Vector3 center, HexLayout layout, float scale)
+        private void DrawHexHandle(Vector3 center, HexLayout layout, float scale, HexOrientation hexOrientation)
         {
             float radius = layout.Size * scale;
 
-            float startAngle = target.GetGeneratorSettings.hexOrientation == HexOrientation.FlatTop ? 0f : 30f;
+            float startAngle = hexOrientation == HexOrientation.FlatTop ? 0f : 30f;
 
             Vector3 firstPoint = Vector3.zero;
 
