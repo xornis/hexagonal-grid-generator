@@ -18,17 +18,23 @@ namespace HexDungeon
         private bool generatorDebugFoldout = true;
 
         private HexRoomGenerator mainGen;
-        private HexRoomGeneratorPreview helper;
-        
+        private HexRoomGeneratorPreview preview;
+
+        private SerializedObject previewSerializedObject;
+
         private void OnEnable()
         {
             mainGen = (HexRoomGenerator)target;
-            helper = mainGen.GetComponent<HexRoomGeneratorPreview>();
+
+            preview = mainGen.GetComponent<HexRoomGeneratorPreview>();
+
+            previewSerializedObject = new SerializedObject(preview);
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
+            previewSerializedObject.Update();
 
             DrawGridSettingsSection();
             DrawGenerationSettingsSection();
@@ -36,6 +42,7 @@ namespace HexDungeon
             DrawGeneratorDebugSection();
 
             serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
+            previewSerializedObject.ApplyModifiedProperties();
         }
 
         #region Grid Settings
@@ -104,18 +111,20 @@ namespace HexDungeon
         {
             DrawFoldout(ref editorPreviewFoldout, "Editor Preview", () =>
             {
-                var previewIsActiveProp = serializedObject.FindProperty("previewIsActive");
+                var previewIsActiveProp = previewSerializedObject.FindProperty("previewIsActive");
                 EditorGUILayout.PropertyField(previewIsActiveProp);
-                bool previewIsActivePropValue = previewIsActiveProp.boolValue;
 
-                if (previewIsActivePropValue)
+                if (previewIsActiveProp.boolValue)
                 {
-                    DrawProp("previewHexColor");
-                    DrawProp("previewHexScale");
+                    var colorProp = previewSerializedObject.FindProperty("previewHexColor");
+                    var scaleProp = previewSerializedObject.FindProperty("previewHexScale");
+
+                    EditorGUILayout.PropertyField(colorProp);
+                    EditorGUILayout.PropertyField(scaleProp);
 
                     EditorGUILayout.BeginHorizontal();
-                    DrawButton("Rebuild Preview", helper.EditorForcePreviewRebuild);
-                    DrawButton("Clear Preview", helper.EditorClearPreviewInternal);
+                    DrawButton("Rebuild Preview", preview.EditorForcePreviewRebuild);
+                    DrawButton("Clear Preview", preview.EditorClearPreviewInternal);
                     EditorGUILayout.EndHorizontal();
                 }
             });

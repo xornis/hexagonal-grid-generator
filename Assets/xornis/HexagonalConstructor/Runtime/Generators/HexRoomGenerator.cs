@@ -43,9 +43,7 @@ namespace HexDungeon
 
 #if UNITY_EDITOR
         #region Editor Preview
-        [SerializeField] private bool previewIsActive = true;
-        [SerializeField] private Color previewHexColor = Color.blue;
-        [SerializeField, Range(0.1f, 1.5f)] private float previewHexScale = 0.9f;
+        
         #endregion Editor Preview
 #endif
 
@@ -114,10 +112,6 @@ namespace HexDungeon
             public HexCoord startHex;
             public float hexScale;
             public HexOrientation hexOrientation;
-
-            public bool previewIsActive;
-            public Color previewHexColor;
-            public float previewHexScale;
         }
 
         public GeneratorSettings GetGeneratorSettings
@@ -128,10 +122,6 @@ namespace HexDungeon
                 startHex = new HexCoord(startAxial.x, startAxial.y),
                 hexScale = hexScale,
                 hexOrientation = hexOrientation,
-
-                previewIsActive = previewIsActive,
-                previewHexColor = previewHexColor,
-                previewHexScale = previewHexScale
             };
         }
     }

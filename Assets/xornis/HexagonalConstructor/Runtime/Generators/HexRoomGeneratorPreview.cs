@@ -8,6 +8,10 @@ namespace HexDungeon
     [ExecuteInEditMode]
     public class HexRoomGeneratorPreview : MonoBehaviour
     {
+        [SerializeField] private bool previewIsActive = true;
+        [SerializeField] private Color previewHexColor = Color.blue;
+        [SerializeField, Range(0.1f, 1.5f)] private float previewHexScale = 0.9f;
+
         private HexRoomGenerator target;
 
         private List<HexCoord> previewCache = new List<HexCoord>();
@@ -36,18 +40,18 @@ namespace HexDungeon
 
         private void OnDrawGizmosSelected()
         {
-            if (!target.GetGeneratorSettings.previewIsActive) return;
+            if (!previewIsActive) return;
             if (!enabled) return;
 
             if (previewDirty)
                 RebuildPreview();
 
-            Handles.color = target.GetGeneratorSettings.previewHexColor;
+            Handles.color = previewHexColor;
 
             foreach (var hex in previewCache)
             {
                 Vector3 center = transform.TransformPoint(target.GetGeneratorSettings.hexLayout.HexToWorld(hex));
-                DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, target.GetGeneratorSettings.previewHexScale, target.GetGeneratorSettings.hexOrientation);
+                DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, previewHexScale, target.GetGeneratorSettings.hexOrientation);
             }
         }
 
