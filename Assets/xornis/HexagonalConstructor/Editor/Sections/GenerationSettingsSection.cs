@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEngine;
 
 namespace HexDungeon.Editor
 {
@@ -9,7 +8,6 @@ namespace HexDungeon.Editor
         private readonly SerializedObject serializedObject;
 
         private bool foldout = true;
-        private bool generationSettingsFoldout = true;
 
         public GenerationSettingsSection(SerializedObject serializedObject)
         {

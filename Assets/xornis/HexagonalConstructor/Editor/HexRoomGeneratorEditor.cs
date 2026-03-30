@@ -9,59 +9,23 @@ namespace HexDungeon
     [CustomEditor(typeof(HexRoomGenerator))]
     public class HexRoomGeneratorEditor : UnityEditor.Editor
     {
-        private bool editorPreviewFoldout = true;
         private bool generatorDebugFoldout = true;
 
         private HexRoomGenerator mainGen;
-        private HexRoomGeneratorPreview preview;
-
-        private SerializedObject previewSerializedObject;
 
         private void OnEnable()
         {
             mainGen = (HexRoomGenerator)target;
-
-            preview = mainGen.GetComponent<HexRoomGeneratorPreview>();
-
-            previewSerializedObject = new SerializedObject(preview);
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
-            previewSerializedObject.Update();
 
-            DrawEditorPreviewSection();
             DrawGeneratorDebugSection();
 
             serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
-            previewSerializedObject.ApplyModifiedProperties();
         }
-
-        #region Editor Preview
-        private void DrawEditorPreviewSection()
-        {
-            EditorHelper.DrawFoldout(ref editorPreviewFoldout, "Editor Preview", () =>
-            {
-                var previewIsActiveProp = previewSerializedObject.FindProperty("previewIsActive");
-                EditorGUILayout.PropertyField(previewIsActiveProp);
-
-                if (previewIsActiveProp.boolValue)
-                {
-                    var colorProp = previewSerializedObject.FindProperty("previewHexColor");
-                    var scaleProp = previewSerializedObject.FindProperty("previewHexScale");
-
-                    EditorGUILayout.PropertyField(colorProp);
-                    EditorGUILayout.PropertyField(scaleProp);
-
-                    EditorGUILayout.BeginHorizontal();
-                    EditorHelper.DrawButton("Rebuild Preview", preview.EditorForcePreviewRebuild);
-                    EditorHelper.DrawButton("Clear Preview", preview.EditorClearPreviewInternal);
-                    EditorGUILayout.EndHorizontal();
-                }
-            });
-        }
-        #endregion Editor Preview
 
         #region Generator Debug
         private void DrawGeneratorDebugSection()
