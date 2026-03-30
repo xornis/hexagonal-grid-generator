@@ -9,8 +9,6 @@ namespace HexDungeon
     [CustomEditor(typeof(HexRoomGenerator))]
     public class HexRoomGeneratorEditor : UnityEditor.Editor
     {
-        private bool generationSettingsFoldout = true;
-
         private bool editorPreviewFoldout = true;
         private bool generatorDebugFoldout = true;
 
@@ -33,37 +31,12 @@ namespace HexDungeon
             serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
             previewSerializedObject.Update();
 
-            DrawGenerationSettingsSection();
             DrawEditorPreviewSection();
             DrawGeneratorDebugSection();
 
             serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
             previewSerializedObject.ApplyModifiedProperties();
         }
-
-        #region Generation Settings
-
-        private void DrawGenerationSettingsSection()
-        {
-            EditorHelper.DrawFoldout(ref generationSettingsFoldout, "Generation Settings", () =>
-            {
-                EditorHelper.DrawProperty("startAxial", serializedObject);
-
-                EditorGUILayout.Space(6);
-
-                var generationModeProp = serializedObject.FindProperty("generationMode");
-                bool isGenerationRandomized = generationModeProp.enumValueIndex == (int)GenerationMode.Randomized;
-                var generatorProp = isGenerationRandomized ? "randomizedGenerator" : "shapeGenerator";
-
-                EditorHelper.DrawProperty("generationMode", serializedObject);
-                EditorHelper.DrawProperty(generatorProp, serializedObject);
-
-                //DrawButton("Randomize Seed", EditorRandomizeSeedInternal);
-            });
-        }
-
-        #endregion Generation Settings
-
 
         #region Editor Preview
         private void DrawEditorPreviewSection()
