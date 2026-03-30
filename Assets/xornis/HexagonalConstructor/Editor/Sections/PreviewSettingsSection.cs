@@ -7,7 +7,7 @@ namespace HexDungeon.Editor
     {
         private readonly SerializedObject serializedObject;
         private readonly HexRoomGeneratorPreview previewGenerator;
-        private readonly HexRoomGenerator mainGen;
+        private readonly HexRoomGenerator mainGenerator;
 
         private bool foldout = true;
 
@@ -15,7 +15,7 @@ namespace HexDungeon.Editor
         {
             this.serializedObject = serializedObject;
 
-            mainGen = generator;
+            mainGenerator = generator;
             previewGenerator = generator.GetComponent<HexRoomGeneratorPreview>();
             if (previewGenerator != null)
                 serializedObject = new SerializedObject(previewGenerator);
