@@ -11,19 +11,7 @@ namespace HexDungeon
 
     public class HexRoomGenerator : MonoBehaviour
     {
-        #region Grid Settings
-
-        #region Tile Visuals 
-        [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")] private GameObject hexPrefab;
-        [SerializeField] private float hexScale = 1f;
-        #endregion Tile Visuals
-
-        #region Tile Geometry
-        [SerializeField] private HexOrientation hexOrientation = HexOrientation.FlatTop;
-        [SerializeField] private float hexRadius = 1f;
-        #endregion Tile Geometry
-
-        #endregion Grid Settings
+        private HexGridSettings gridSettings;
 
         #region Generation Settings
         [SerializeField, Tooltip("Axial coordinates (Q, R) of the starting hex. \nX = Q \nY = R")] private Vector2Int startAxial;
@@ -41,16 +29,15 @@ namespace HexDungeon
 
         #endregion Generation Settings
 
-#if UNITY_EDITOR
-        #region Editor Preview
-        
-        #endregion Editor Preview
-#endif
-
         #region Generator Debug 
         [SerializeField] private bool debugMode = false;
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
         #endregion Generator Debug
+
+        private void Awake()
+        {
+            gridSettings = GetComponent<HexGridSettings>();
+        }
 
         private void Start()
         {
@@ -81,11 +68,11 @@ namespace HexDungeon
 
         private void SpawnHex(HexCoord hex)
         {
-            if (hexPrefab == null) return;
+            if (gridSettings.HexPrefab == null) return;
 
-            Vector3 pos = GetGeneratorSettings.hexLayout.HexToWorld(hex);
-            var instance = Instantiate(hexPrefab, pos, Quaternion.identity, transform);
-            instance.transform.localScale = Vector3.one * hexScale;
+            Vector3 pos = gridSettings.HexLayout.HexToWorld(hex);
+            var instance = Instantiate(gridSettings.HexPrefab, pos, Quaternion.identity, transform);
+            instance.transform.localScale = Vector3.one * gridSettings.HexScale;
         }
 
 #if UNITY_EDITOR
@@ -108,20 +95,14 @@ namespace HexDungeon
         
         public struct GeneratorSettings
         {
-            public HexLayout hexLayout;
             public HexCoord startHex;
-            public float hexScale;
-            public HexOrientation hexOrientation;
         }
 
         public GeneratorSettings GetGeneratorSettings
         {
             get => new GeneratorSettings
             {
-                hexLayout = new HexLayout(hexOrientation, hexRadius),
                 startHex = new HexCoord(startAxial.x, startAxial.y),
-                hexScale = hexScale,
-                hexOrientation = hexOrientation,
             };
         }
     }

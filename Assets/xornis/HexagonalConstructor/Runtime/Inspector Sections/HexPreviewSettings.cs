@@ -6,7 +6,7 @@ using UnityEngine;
 namespace HexDungeon
 {
     [ExecuteInEditMode]
-    public class HexRoomGeneratorPreview : MonoBehaviour
+    public class HexPreviewSettings : MonoBehaviour
     {
         [SerializeField] private bool previewIsActive = true;
         [SerializeField] private Color previewHexColor = Color.blue;
@@ -50,8 +50,8 @@ namespace HexDungeon
 
             foreach (var hex in previewCache)
             {
-                Vector3 center = transform.TransformPoint(target.GetGeneratorSettings.hexLayout.HexToWorld(hex));
-                DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, previewHexScale, target.GetGeneratorSettings.hexOrientation);
+                //Vector3 center = transform.TransformPoint(target.GetGeneratorSettings.gridSettings.HexLayout.HexToWorld(hex));
+                //DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, previewHexScale, target.GetGeneratorSettings.hexOrientation);
             }
         }
 
@@ -99,7 +99,7 @@ namespace HexDungeon
         }
     }
 
-    [CustomEditor(typeof(HexRoomGeneratorPreview))]
+    [CustomEditor(typeof(HexPreviewSettings))]
     public class HexRoomGeneratorPreviewEditor : Editor
     {
         public override void OnInspectorGUI()

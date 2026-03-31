@@ -6,7 +6,7 @@ namespace HexDungeon.Editor
     public class PreviewSettingsSection
     {
         private SerializedObject previewSerializedObject;
-        private HexRoomGeneratorPreview previewGenerator;
+        private HexPreviewSettings previewGenerator;
         private readonly HexRoomGenerator mainGenerator;
 
         private bool foldout = true;
@@ -21,7 +21,7 @@ namespace HexDungeon.Editor
         {
             if (previewGenerator == null)
             {
-                previewGenerator = mainGenerator.gameObject.AddComponent<HexRoomGeneratorPreview>();
+                previewGenerator = mainGenerator.gameObject.AddComponent<HexPreviewSettings>();
                 RefreshPreviewReference();
                 return;
             }
@@ -65,7 +65,7 @@ namespace HexDungeon.Editor
 
         private void RefreshPreviewReference()
         {
-            previewGenerator = mainGenerator.GetComponent<HexRoomGeneratorPreview>();
+            previewGenerator = mainGenerator.GetComponent<HexPreviewSettings>();
 
             if (previewGenerator != null)
                 previewSerializedObject = new SerializedObject(previewGenerator);
