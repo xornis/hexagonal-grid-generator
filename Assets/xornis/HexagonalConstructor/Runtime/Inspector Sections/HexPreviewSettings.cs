@@ -12,19 +12,19 @@ namespace HexDungeon
         [SerializeField] private Color previewHexColor = Color.blue;
         [SerializeField, Range(0.1f, 1.5f)] private float previewHexScale = 0.9f;
 
-        private HexRoomGenerator target;
+        private HexRoomContext context;
 
         private List<HexCoord> previewCache = new List<HexCoord>();
         private bool previewDirty = true;
 
         public void OnEnable()
         {
-            target = GetComponent<HexRoomGenerator>();
+            context = GetComponent<HexRoomContext>();
         }
 
         private void RebuildPreview()
         {
-            var previewGen = target.CurrentGenerator;
+            var previewGen = context.Generation.CurrentGenerator;
 
             if (previewGen == null)
             {
@@ -34,7 +34,7 @@ namespace HexDungeon
 
             previewCache.Clear();
 
-            foreach (var hex in previewGen.Generate(target.GetGeneratorSettings.startHex))
+            foreach (var hex in previewGen.Generate(context.Generation.StartHex))
                 previewCache.Add(hex);
         }
 
@@ -50,16 +50,16 @@ namespace HexDungeon
 
             foreach (var hex in previewCache)
             {
-                //Vector3 center = transform.TransformPoint(target.GetGeneratorSettings.gridSettings.HexLayout.HexToWorld(hex));
-                //DrawHexHandle(center, target.GetGeneratorSettings.hexLayout, previewHexScale, target.GetGeneratorSettings.hexOrientation);
+                Vector3 center = transform.TransformPoint(context.Grid.HexLayout.HexToWorld(hex));
+                DrawHexHandle(center, context.Grid.HexLayout, previewHexScale);
             }
         }
 
-        private void DrawHexHandle(Vector3 center, HexLayout layout, float scale, HexOrientation hexOrientation)
+        private void DrawHexHandle(Vector3 center, HexLayout layout, float scale)
         {
             float radius = layout.Size * scale;
 
-            float startAngle = hexOrientation == HexOrientation.FlatTop ? 0f : 30f;
+            float startAngle = layout.Orientation == HexOrientation.FlatTop ? 0f : 30f;
 
             Vector3 firstPoint = Vector3.zero;
 

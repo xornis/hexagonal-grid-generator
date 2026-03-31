@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -12,22 +11,7 @@ namespace HexDungeon
     public class HexRoomGenerator : MonoBehaviour
     {
         private HexGridSettings gridSettings;
-
-        #region Generation Settings
-        [SerializeField, Tooltip("Axial coordinates (Q, R) of the starting hex. \nX = Q \nY = R")] private Vector2Int startAxial;
-
-        [SerializeField] private GenerationMode generationMode;
-        [SerializeField, SerializeReference] private ShapeGenerator shapeGenerator;
-        [SerializeField, SerializeReference] private RandomizedGenerator randomizedGenerator;
-
-        public SerializableHexGenerator CurrentGenerator
-        {
-            get => generationMode == GenerationMode.Randomized 
-                ? randomizedGenerator
-                : shapeGenerator;
-        }
-
-        #endregion Generation Settings
+        private HexGenerationSettings generationSettings;
 
         #region Generator Debug 
         [SerializeField] private bool debugMode = false;
@@ -37,6 +21,7 @@ namespace HexDungeon
         private void Awake()
         {
             gridSettings = GetComponent<HexGridSettings>();
+            generationSettings = GetComponent<HexGenerationSettings>();
         }
 
         private void Start()
@@ -53,13 +38,13 @@ namespace HexDungeon
 
         private void Generate()
         {
-            foreach (var hex in CurrentGenerator.Generate(GetGeneratorSettings.startHex))
+            foreach (var hex in generationSettings.CurrentGenerator.Generate(generationSettings.StartHex))
                 SpawnHex(hex);
         }
 
         private IEnumerator DebugGenerate()
         {
-            foreach (var hex in CurrentGenerator.Generate(GetGeneratorSettings.startHex))
+            foreach (var hex in generationSettings.CurrentGenerator.Generate(generationSettings.StartHex))
             {
                 SpawnHex(hex);
                 yield return new WaitForSeconds(stepDelay);
@@ -92,19 +77,5 @@ namespace HexDungeon
                 DestroyImmediate(transform.GetChild(i).gameObject);
         }
 #endif
-        
-        public struct GeneratorSettings
-        {
-            public HexCoord startHex;
-        }
-
-        public GeneratorSettings GetGeneratorSettings
-        {
-            get => new GeneratorSettings
-            {
-                startHex = new HexCoord(startAxial.x, startAxial.y),
-            };
-        }
     }
-
 }

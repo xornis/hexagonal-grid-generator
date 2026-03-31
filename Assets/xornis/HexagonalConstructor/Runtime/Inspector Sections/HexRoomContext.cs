@@ -6,6 +6,7 @@ namespace HexDungeon
     public class HexRoomContext : MonoBehaviour
     {
         private HexGridSettings gridSettings;
+        private HexGenerationSettings generationSettings;
 
         public HexGridSettings Grid
         {
@@ -14,6 +15,16 @@ namespace HexDungeon
                 if (gridSettings == null)
                     gridSettings = GetComponent<HexGridSettings>();
                 return gridSettings;
+            }
+        }
+
+        public HexGenerationSettings Generation
+        {
+            get
+            {
+                if (generationSettings == null)
+                    generationSettings = GetComponent<HexGenerationSettings>();
+                return generationSettings;
             }
         }
     }
