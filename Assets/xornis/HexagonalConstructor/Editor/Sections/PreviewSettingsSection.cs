@@ -5,46 +5,53 @@ namespace HexDungeon.Editor
 {
     public class PreviewSettingsSection
     {
-        private readonly SerializedObject serializedObject;
-        private readonly HexRoomGeneratorPreview previewGenerator;
+        private SerializedObject previewSerializedObject;
+        private HexRoomGeneratorPreview previewGenerator;
         private readonly HexRoomGenerator mainGenerator;
 
         private bool foldout = true;
 
-        public PreviewSettingsSection(SerializedObject serializedObject, HexRoomGenerator generator)
+        public PreviewSettingsSection(HexRoomGenerator generator)
         {
-            this.serializedObject = serializedObject;
-
             mainGenerator = generator;
-            previewGenerator = generator.GetComponent<HexRoomGeneratorPreview>();
-            if (previewGenerator != null)
-                serializedObject = new SerializedObject(previewGenerator);
+            RefreshPreviewReference();
         }
 
         public void Draw()
         {
-            foldout = EditorGUILayout.Foldout(foldout, "Preview Settings", true, EditorStyles.foldoutHeader);
-            if (!foldout) return;
-
-            EditorHelper.Indent(() =>
+            if (previewGenerator == null)
             {
-                var previewIsActiveProp = serializedObject.FindProperty("previewIsActive");
-                EditorHelper.DrawProperty("previewIsActive", serializedObject);
+                previewGenerator = mainGenerator.gameObject.AddComponent<HexRoomGeneratorPreview>();
+                RefreshPreviewReference();
+                return;
+            }
 
-                if (previewIsActiveProp.boolValue)
+            previewSerializedObject.Update();
+
+            EditorHelper.DrawFoldout(ref foldout, "Preview Settings", () =>
+            {
+                EditorHelper.Indent(() =>
                 {
-                    DrawPreviewFields();
-                    DrawPreviewButtons();
-                }
+                    var previewIsActiveProp = previewSerializedObject.FindProperty("previewIsActive");
+                    EditorHelper.DrawProperty("previewIsActive", previewSerializedObject);
+
+                    if (previewIsActiveProp.boolValue)
+                    {
+                        DrawPreviewFields();
+                        DrawPreviewButtons();
+                    }
+                });
             });
+            
+            previewSerializedObject.ApplyModifiedProperties();
         }
 
         private void DrawPreviewFields()
         {
             EditorHelper.Indent(() =>
             {
-                EditorHelper.DrawProperty("previewHexColor", serializedObject);
-                EditorHelper.DrawProperty("previewHexScale", serializedObject);
+                EditorHelper.DrawProperty("previewHexColor", previewSerializedObject);
+                EditorHelper.DrawProperty("previewHexScale", previewSerializedObject);
             });
         }
 
@@ -54,6 +61,14 @@ namespace HexDungeon.Editor
             EditorHelper.DrawButton("Rebuild Preview", previewGenerator.EditorForcePreviewRebuild);
             EditorHelper.DrawButton("Clear Preview", previewGenerator.EditorClearPreviewInternal);
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void RefreshPreviewReference()
+        {
+            previewGenerator = mainGenerator.GetComponent<HexRoomGeneratorPreview>();
+
+            if (previewGenerator != null)
+                previewSerializedObject = new SerializedObject(previewGenerator);
         }
     }
 }
