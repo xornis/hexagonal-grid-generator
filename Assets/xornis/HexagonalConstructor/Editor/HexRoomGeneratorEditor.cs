@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace HexDungeon
 {
+    public interface IEditorSection
+    {
+        void Draw();
+    }
+
     [CustomEditor(typeof(HexRoomGenerator))]
     public class HexRoomGeneratorEditor : UnityEditor.Editor
     {

@@ -4,7 +4,7 @@ using UnityEditor;
 namespace HexDungeon.Editor
 {
     [CustomEditor(typeof(HexGridSettings))]
-    public class GridSettingsEditor : UnityEditor.Editor
+    public class GridSettingsEditor : UnityEditor.Editor, IEditorSection
     {
         private HexGridSettings gridSettings;
         private bool foldout = true;

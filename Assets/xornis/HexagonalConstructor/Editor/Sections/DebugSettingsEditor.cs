@@ -5,7 +5,7 @@ using UnityEditor;
 namespace HexDungeon.Editor
 {
     [CustomEditor(typeof(HexDebugSettings))]
-    public class DebugSettingsEditor : UnityEditor.Editor
+    public class DebugSettingsEditor : UnityEditor.Editor, IEditorSection
     {
         private HexDebugSettings debugSettings;
         private bool foldout = true;

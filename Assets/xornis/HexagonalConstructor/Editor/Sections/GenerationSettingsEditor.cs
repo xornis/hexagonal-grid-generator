@@ -4,7 +4,7 @@ using UnityEditor;
 namespace HexDungeon.Editor
 {
     [CustomEditor(typeof(HexGenerationSettings))]
-    public class GenerationSettingsEditor : UnityEditor.Editor
+    public class GenerationSettingsEditor : UnityEditor.Editor, IEditorSection
     {
         private HexGenerationSettings generationSettings;
 
