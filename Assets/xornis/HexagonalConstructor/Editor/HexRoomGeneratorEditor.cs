@@ -29,7 +29,7 @@ namespace HexDungeon
             {
                 mainGen.GetComponent<HexGridSettings>(),
                 mainGen.GetComponent<HexGenerationSettings>(),
-                //mainGen.GetComponent<HexPreviewSettings>(),
+                mainGen.GetComponent<HexPreviewSettings>(),
                 mainGen.GetComponent<HexDebugSettings>()
             };
 
