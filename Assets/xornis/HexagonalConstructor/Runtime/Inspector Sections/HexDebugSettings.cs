@@ -5,12 +5,12 @@ namespace HexagonalConstructor
 {
     public class HexDebugSettings : MonoBehaviour
     {
-        [SerializeField] private bool debugMode = false;
+        [SerializeField] private bool isActive = false;
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
 
         private HexRoomContext context;
 
-        public bool IsDebugMode => debugMode;
+        public bool IsDebugMode => isActive;
         public float StepDelay => stepDelay;
 
         private void Awake()
@@ -20,7 +20,7 @@ namespace HexagonalConstructor
 
         private void Start()
         {
-            if (debugMode && context != null)
+            if (isActive && context != null)
             {
                 context.Generator.ClearGeneration();
                 context.Generator.StartCoroutine(context.Generator.GenerateWithDelay(stepDelay));

@@ -25,7 +25,7 @@ namespace HexagonalConstructor.Editor
         {
             EditorHelper.DrawFoldout(ref foldout, previewSettings.GetType().Name, () =>
             {
-                var previewIsActiveProp = serializedObject.FindProperty("previewIsActive");
+                var previewIsActiveProp = serializedObject.FindProperty("isActive");
                 EditorHelper.DrawProperties(serializedObject, previewIsActiveProp.propertyPath);
 
                 if (previewIsActiveProp.boolValue)
@@ -40,7 +40,7 @@ namespace HexagonalConstructor.Editor
         {
             EditorHelper.Indent(() =>
             {
-                EditorHelper.DrawProperties(serializedObject, "previewHexColor", "previewHexScale");
+                EditorHelper.DrawProperties(serializedObject, "hexColor", "hexScale");
             });
         }
 

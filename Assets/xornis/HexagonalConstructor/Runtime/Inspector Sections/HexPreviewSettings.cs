@@ -8,9 +8,9 @@ namespace HexagonalConstructor
     [ExecuteInEditMode]
     public class HexPreviewSettings : MonoBehaviour
     {
-        [SerializeField] private bool previewIsActive = true;
-        [SerializeField] private Color previewHexColor = Color.blue;
-        [SerializeField, Range(0.1f, 1.5f)] private float previewHexScale = 0.9f;
+        [SerializeField] private bool isActive = true;
+        [SerializeField] private Color hexColor = Color.blue;
+        [SerializeField, Range(0.1f, 1.5f)] private float hexScale = 0.9f;
 
         private HexRoomContext context;
 
@@ -40,18 +40,18 @@ namespace HexagonalConstructor
 
         private void OnDrawGizmosSelected()
         {
-            if (!previewIsActive) return;
+            if (!isActive) return;
             if (!enabled) return;
 
             if (previewDirty)
                 RebuildPreview();
 
-            Handles.color = previewHexColor;
+            Handles.color = hexColor;
 
             foreach (var hex in previewCache)
             {
                 Vector3 center = transform.TransformPoint(context.Grid.HexLayout.HexToWorld(hex));
-                DrawHexHandle(center, context.Grid.HexLayout, previewHexScale);
+                DrawHexHandle(center, context.Grid.HexLayout, hexScale);
             }
         }
 

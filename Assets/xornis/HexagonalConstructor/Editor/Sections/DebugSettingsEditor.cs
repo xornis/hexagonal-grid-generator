@@ -26,7 +26,7 @@ namespace HexagonalConstructor.Editor
         {
             EditorHelper.DrawFoldout(ref foldout, debugSettings.GetType().Name, () =>
             {
-                var debugModeProp = serializedObject.FindProperty("debugMode");
+                var debugModeProp = serializedObject.FindProperty("isActive");
                 EditorHelper.DrawProperties(serializedObject, debugModeProp.propertyPath);
 
                 if (debugModeProp.boolValue)
