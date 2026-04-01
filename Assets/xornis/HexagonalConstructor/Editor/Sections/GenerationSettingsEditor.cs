@@ -18,6 +18,7 @@ namespace HexDungeon.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            Draw();
             serializedObject.ApplyModifiedProperties();
         }
 
