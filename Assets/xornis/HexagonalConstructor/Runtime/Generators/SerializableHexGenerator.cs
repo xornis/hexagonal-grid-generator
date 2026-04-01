@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     public interface IHexGenerator
     {

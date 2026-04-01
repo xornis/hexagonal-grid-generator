@@ -2,7 +2,7 @@
 
 using UnityEditor;
 
-namespace HexDungeon.Editor
+namespace HexagonalConstructor.Editor
 {
     [CustomEditor(typeof(HexDebugSettings))]
     public class DebugSettingsEditor : UnityEditor.Editor, IEditorSection

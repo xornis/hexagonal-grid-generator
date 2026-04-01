@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     public class HexDebugSettings : MonoBehaviour
     {

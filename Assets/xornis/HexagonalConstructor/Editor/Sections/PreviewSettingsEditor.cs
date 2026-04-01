@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace HexDungeon.Editor
+namespace HexagonalConstructor.Editor
 {
     [CustomEditor(typeof(HexPreviewSettings))]
     public class PreviewSettingsEditor : UnityEditor.Editor, IEditorSection

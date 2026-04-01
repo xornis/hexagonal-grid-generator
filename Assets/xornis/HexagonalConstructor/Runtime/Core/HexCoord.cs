@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [System.Serializable]
     public readonly struct HexCoord

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     public class HexGenerationSettings : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace HexDungeon.Editor
+namespace HexagonalConstructor.Editor
 {
     public static class EditorHelper 
     {

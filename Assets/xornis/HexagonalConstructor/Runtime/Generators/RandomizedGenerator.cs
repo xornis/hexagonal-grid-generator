@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     public abstract class RandomizedGenerator : SerializableHexGenerator
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [ExecuteInEditMode]
     public class HexPreviewSettings : MonoBehaviour

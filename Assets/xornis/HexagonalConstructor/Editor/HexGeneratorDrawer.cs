@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [CustomPropertyDrawer(typeof(SerializableHexGenerator), true)]
     public class HexGeneratorDrawer : PropertyDrawer

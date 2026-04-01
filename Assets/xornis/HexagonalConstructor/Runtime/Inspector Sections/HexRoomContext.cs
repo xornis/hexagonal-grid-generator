@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [RequireComponent(typeof(HexGridSettings))]
     [RequireComponent(typeof(HexGenerationSettings))]

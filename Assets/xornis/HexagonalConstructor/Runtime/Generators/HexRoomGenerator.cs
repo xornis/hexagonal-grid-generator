@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     public enum GenerationMode
     {
