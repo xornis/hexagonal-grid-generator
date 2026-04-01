@@ -23,7 +23,7 @@ namespace HexDungeon.Editor
 
         public void Draw()
         {
-            EditorHelper.DrawFoldout(ref foldout, "Preview Settings", () =>
+            EditorHelper.DrawFoldout(ref foldout, previewSettings.GetType().Name, () =>
             {
                 var previewIsActiveProp = serializedObject.FindProperty("previewIsActive");
                 EditorHelper.DrawProperty(previewIsActiveProp.propertyPath, serializedObject);

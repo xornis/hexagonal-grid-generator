@@ -24,10 +24,9 @@ namespace HexDungeon.Editor
 
         public void Draw()
         {
-            EditorHelper.DrawFoldout(ref foldout, generationSettings.name, () =>
+            EditorHelper.DrawFoldout(ref foldout, generationSettings.GetType().Name, () =>
             {
                 DrawStartAxial();
-                EditorGUILayout.Space(6);
                 DrawGenerationMode();
             });
         }

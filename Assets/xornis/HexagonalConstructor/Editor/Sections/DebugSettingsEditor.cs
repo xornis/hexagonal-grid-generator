@@ -8,7 +8,8 @@ namespace HexDungeon.Editor
     public class DebugSettingsEditor : UnityEditor.Editor
     {
         private HexDebugSettings debugSettings;
-        
+        private bool foldout = true;
+
         private void OnEnable()
         {
             debugSettings = (HexDebugSettings)target;
@@ -23,19 +24,25 @@ namespace HexDungeon.Editor
 
         public void Draw()
         {
-            var debugModeProp = serializedObject.FindProperty("debugMode");
-            EditorHelper.DrawProperty(debugModeProp.propertyPath, serializedObject);
-
-            if (debugModeProp.boolValue)
+            EditorHelper.DrawFoldout(ref foldout, debugSettings.GetType().Name, () =>
             {
-                DrawFields();
-                DrawButtons();
-            }
+                var debugModeProp = serializedObject.FindProperty("debugMode");
+                EditorHelper.DrawProperty(debugModeProp.propertyPath, serializedObject);
+
+                if (debugModeProp.boolValue)
+                {
+                    DrawFields();
+                    DrawButtons();
+                }
+            });
         }
 
         private void DrawFields()
         {
-            EditorHelper.DrawProperty("stepDelay", serializedObject);
+            EditorHelper.Indent(() =>
+            {
+                EditorHelper.DrawProperty("stepDelay", serializedObject);
+            });
         }
 
         private void DrawButtons()

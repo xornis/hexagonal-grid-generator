@@ -7,6 +7,7 @@ namespace HexDungeon.Editor
     public class GridSettingsEditor : UnityEditor.Editor
     {
         private HexGridSettings gridSettings;
+        private bool foldout = true;
 
         private bool tileVisualsFoldout = true;
         private bool tileGeometryFoldout = true;
@@ -25,7 +26,7 @@ namespace HexDungeon.Editor
 
         public void Draw()
         {
-            EditorHelper.Indent(() =>
+            EditorHelper.DrawFoldout(ref foldout, gridSettings.GetType().Name, () =>
             {
                 DrawTileVisuals();
                 DrawTileGeometry();

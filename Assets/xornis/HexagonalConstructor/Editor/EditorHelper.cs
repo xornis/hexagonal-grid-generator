@@ -1,7 +1,8 @@
 #if UNITY_EDITOR
+using System;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
-using System;
 
 namespace HexDungeon.Editor
 {
@@ -29,7 +30,7 @@ namespace HexDungeon.Editor
 
         public static void DrawFoldout(ref bool state, string title, Action body)
         {
-            state = EditorGUILayout.Foldout(state, title, true, EditorStyles.foldoutHeader);
+            state = EditorGUILayout.Foldout(state, Regex.Replace(title, "([a-z])([A-Z])", "$1 $2"), true, EditorStyles.foldoutHeader);
             if (!state) return;
 
             Indent(body);
