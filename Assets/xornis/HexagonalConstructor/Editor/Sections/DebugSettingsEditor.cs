@@ -16,7 +16,6 @@ namespace HexDungeon.Editor
 
         public override void OnInspectorGUI()
         {
-            Draw();
         }
 
         public void Draw()

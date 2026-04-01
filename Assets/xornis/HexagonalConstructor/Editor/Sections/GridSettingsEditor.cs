@@ -3,39 +3,39 @@ using UnityEditor;
 
 namespace HexDungeon.Editor
 {
-    public class GridSettingsSection
+    public class GridSettingsEditor : UnityEditor.Editor
     {
-        private readonly SerializedObject serializedObject;
+        private HexGridSettings gridSettings;
 
-        private bool foldout = true;
         private bool tileVisualsFoldout = true;
         private bool tileGeometryFoldout = true;
 
-        public GridSettingsSection(SerializedObject serializedObject)
+        private void OnEnable()
         {
-            this.serializedObject = serializedObject;
+            gridSettings = (HexGridSettings)target;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            Draw();
         }
 
         public void Draw()
         {
-            foldout = EditorGUILayout.Foldout(foldout, "Grid Settings", true, EditorStyles.foldoutHeader);
-            if (!foldout) return;
+            serializedObject.Update();
 
             EditorHelper.Indent(() =>
             {
                 DrawTileVisuals();
                 DrawTileGeometry();
             });
-
-            EditorGUILayout.Space(4);
+            
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawTileVisuals()
         {
-            tileVisualsFoldout = EditorGUILayout.Foldout(tileVisualsFoldout, "Tile Visuals", true, EditorStyles.foldoutHeader);
-            if (!tileVisualsFoldout) return;
-
-            EditorHelper.Indent(() =>
+            EditorHelper.DrawFoldout(ref tileVisualsFoldout, "Tile Visuals", () =>
             {
                 EditorHelper.DrawProperty("hexPrefab", serializedObject);
                 EditorHelper.DrawProperty("hexScale", serializedObject);
@@ -44,10 +44,7 @@ namespace HexDungeon.Editor
 
         private void DrawTileGeometry()
         {
-            tileGeometryFoldout = EditorGUILayout.Foldout(tileGeometryFoldout, "Tile Geometry", true, EditorStyles.foldoutHeader);
-            if (!tileGeometryFoldout) return;
-
-            EditorHelper.Indent(() =>
+            EditorHelper.DrawFoldout(ref tileGeometryFoldout, "Tile Geometry", () => 
             {
                 EditorHelper.DrawProperty("hexOrientation", serializedObject);
                 EditorHelper.DrawProperty("hexRadius", serializedObject);

@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using HexDungeon.Editor;
+using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace HexDungeon
 {
@@ -8,30 +10,60 @@ namespace HexDungeon
     public class HexRoomGeneratorEditor : UnityEditor.Editor
     {
         private HexRoomGenerator mainGen;
-
-        private GridSettingsSection gridSettingsSection;
-        private GenerationSettingsSection generationSettingsSection;
-        private PreviewSettingsSection previewSettingsSection;
-        private DebugSettingsEditor debugSettingsSection;
+        private UnityEditor.Editor[] sectionEditors;
 
         private void OnEnable()
         {
             mainGen = (HexRoomGenerator)target;
+            InitializeEditors();
+        }
 
-            gridSettingsSection = new GridSettingsSection(serializedObject);
-            generationSettingsSection = new GenerationSettingsSection(serializedObject);
-            previewSettingsSection = new PreviewSettingsSection(mainGen);
-            debugSettingsSection = new DebugSettingsEditor();
+        private void OnDisable()
+        {
+            DestroyEditors();
+        }
+
+        private void InitializeEditors()
+        {
+            var sections = new Component[]
+            {
+                mainGen.GetComponent<HexGridSettings>(),
+                //mainGen.GetComponent<HexGenerationSettings>(),
+                //mainGen.GetComponent<HexPreviewSettings>(),
+                mainGen.GetComponent<HexDebugSettings>()
+            };
+
+            sectionEditors = sections
+                .Where(s => s != null)
+                .Select(s => CreateEditor(s))
+                .ToArray();
+        }
+
+        private void DestroyEditors()
+        {
+            if (sectionEditors == null) return;
+
+            foreach (var editor in sectionEditors)
+            {
+                if (editor != null)
+                    DestroyImmediate(editor);
+            }
+
+            sectionEditors = null;
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
 
-            gridSettingsSection.Draw();
-            generationSettingsSection.Draw();
-            previewSettingsSection.Draw();
-            debugSettingsSection.Draw();
+            if (sectionEditors != null)
+            {
+                foreach (var editor in sectionEditors)
+                {
+                    if (editor != null)
+                        editor.OnInspectorGUI();
+                }
+            }
 
             serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
         }

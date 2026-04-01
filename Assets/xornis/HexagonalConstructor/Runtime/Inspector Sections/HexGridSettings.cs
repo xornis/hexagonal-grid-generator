@@ -12,5 +12,6 @@ namespace HexDungeon
         public GameObject HexPrefab => hexPrefab;
         public float HexScale => hexScale;
         public HexLayout HexLayout => new HexLayout(hexOrientation, hexRadius);
+        public HexOrientation HexOrientation => hexOrientation;
     }
 }

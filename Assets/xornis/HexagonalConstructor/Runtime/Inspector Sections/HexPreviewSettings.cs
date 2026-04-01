@@ -59,7 +59,7 @@ namespace HexDungeon
         {
             float radius = layout.Size * scale;
 
-            float startAngle = layout.Orientation == HexOrientation.FlatTop ? 0f : 30f;
+            float startAngle = context.Grid.HexOrientation == HexOrientation.FlatTop ? 0f : 30f;
 
             Vector3 firstPoint = Vector3.zero;
 
