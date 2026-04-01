@@ -180,9 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03a54c4f848e6145a8e5f897635f8a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewIsActive: 1
-  previewHexColor: {r: 0, g: 0, b: 1, a: 1}
-  previewHexScale: 0.9
+  isActive: 1
+  hexColor: {r: 0, g: 0, b: 1, a: 1}
+  hexScale: 0.9
 --- !u!114 &151163237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,10 +192,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 151163233}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef77a3c5bdb3a4d48ba8d980cad4f8d0, type: 3}
+  m_Script: {fileID: 11500000, guid: f5b2314ebf552034aadaf6ab5b1fe686, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMode: 1
+  isActive: 0
   stepDelay: 0.1
 --- !u!114 &151163238
 MonoBehaviour:
@@ -210,16 +210,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startAxial: {x: 0, y: 0}
-  generationMode: 0
+  generationMode: 1
   shapeGenerator:
-    rid: -2
+    rid: 5828956477536600138
   randomizedGenerator:
-    rid: -2
+    rid: 5828956477536600139
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 5828956477536600138
+      type: {class: RingGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+      data:
+        radius: 4
+    - rid: 5828956477536600139
+      type: {class: ClusterGrowthGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+      data:
+        hexCount: 60
+        useSeed: 1
+        seed: 0
 --- !u!114 &151163239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +253,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 151163233}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26c97be0c6332c04fb6958f1e8df5c0b, type: 3}
+  m_Script: {fileID: 11500000, guid: e2219e46b275601479c8602c83ffbd6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1984249227

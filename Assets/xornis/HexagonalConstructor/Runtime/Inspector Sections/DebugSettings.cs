@@ -3,19 +3,19 @@ using UnityEngine;
 
 namespace HexagonalConstructor
 {
-    public class HexDebugSettings : MonoBehaviour
+    public class DebugSettings : MonoBehaviour
     {
         [SerializeField] private bool isActive = false;
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
 
-        private HexRoomContext context;
+        private GeneratorContext context;
 
         public bool IsDebugMode => isActive;
         public float StepDelay => stepDelay;
 
         private void Awake()
         {
-            context = GetComponent<HexRoomContext>();
+            context = GetComponent<GeneratorContext>();
         }
 
         private void Start()

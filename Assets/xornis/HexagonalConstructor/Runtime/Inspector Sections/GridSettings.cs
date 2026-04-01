@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HexagonalConstructor
 {
-    public class HexGridSettings : MonoBehaviour
+    public class GridSettings : MonoBehaviour
     {
         [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")] private GameObject hexPrefab;
         [SerializeField] private float hexScale = 1f;

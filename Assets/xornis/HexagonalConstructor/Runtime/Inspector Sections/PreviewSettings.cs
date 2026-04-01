@@ -6,20 +6,20 @@ using UnityEngine;
 namespace HexagonalConstructor
 {
     [ExecuteInEditMode]
-    public class HexPreviewSettings : MonoBehaviour
+    public class PreviewSettings : MonoBehaviour
     {
         [SerializeField] private bool isActive = true;
         [SerializeField] private Color hexColor = Color.blue;
         [SerializeField, Range(0.1f, 1.5f)] private float hexScale = 0.9f;
 
-        private HexRoomContext context;
+        private GeneratorContext context;
 
         private List<HexCoord> previewCache = new List<HexCoord>();
         private bool previewDirty = true;
 
         public void OnEnable()
         {
-            context = GetComponent<HexRoomContext>();
+            context = GetComponent<GeneratorContext>();
         }
 
         private void RebuildPreview()

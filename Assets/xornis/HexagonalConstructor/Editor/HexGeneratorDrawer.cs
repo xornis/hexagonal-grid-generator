@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace HexagonalConstructor
 {
-    [CustomPropertyDrawer(typeof(SerializableHexGenerator), true)]
+    [CustomPropertyDrawer(typeof(SerializableGridGenerator), true)]
     public class HexGeneratorDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

@@ -8,14 +8,14 @@ namespace HexagonalConstructor
         Shapes, Randomized
     };
 
-    [RequireComponent(typeof(HexRoomContext))]
-    public class HexRoomGenerator : MonoBehaviour
+    [RequireComponent(typeof(GeneratorContext))]
+    public class GridGenerator : MonoBehaviour
     {
-        private HexRoomContext context;
+        private GeneratorContext context;
 
         private void Awake()
         {
-            context = GetComponent<HexRoomContext>();
+            context = GetComponent<GeneratorContext>();
         }
 
         private void Start()

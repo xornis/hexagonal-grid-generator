@@ -8,7 +8,7 @@ namespace HexagonalConstructor
     }
 
     [System.Serializable]
-    public abstract class SerializableHexGenerator : IHexGenerator
+    public abstract class SerializableGridGenerator : IHexGenerator
     {
         public abstract IEnumerable<HexCoord> Generate(HexCoord start);
     }

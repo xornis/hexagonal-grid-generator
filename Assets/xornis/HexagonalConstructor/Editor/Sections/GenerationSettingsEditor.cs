@@ -3,16 +3,16 @@ using UnityEditor;
 
 namespace HexagonalConstructor.Editor
 {
-    [CustomEditor(typeof(HexGenerationSettings))]
+    [CustomEditor(typeof(GenerationSettings))]
     public class GenerationSettingsEditor : UnityEditor.Editor, IEditorSection
     {
-        private HexGenerationSettings generationSettings;
+        private GenerationSettings generationSettings;
 
         private bool foldout = true;
 
         private void OnEnable()
         {
-            generationSettings = (HexGenerationSettings)target;
+            generationSettings = (GenerationSettings)target;
         }
         
         public override void OnInspectorGUI()

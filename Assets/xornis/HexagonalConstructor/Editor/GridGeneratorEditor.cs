@@ -10,15 +10,15 @@ namespace HexagonalConstructor
         void Draw();
     }
 
-    [CustomEditor(typeof(HexRoomGenerator))]
-    public class HexRoomGeneratorEditor : UnityEditor.Editor
+    [CustomEditor(typeof(GridGenerator))]
+    public class GridGeneratorEditor : UnityEditor.Editor
     {
-        private HexRoomGenerator mainGen;
+        private GridGenerator mainGen;
         private UnityEditor.Editor[] sectionEditors;
 
         private void OnEnable()
         {
-            mainGen = (HexRoomGenerator)target;
+            mainGen = (GridGenerator)target;
             InitializeEditors();
         }
 
@@ -31,10 +31,10 @@ namespace HexagonalConstructor
         {
             var sections = new Component[]
             {
-                mainGen.GetComponent<HexGridSettings>(),
-                mainGen.GetComponent<HexGenerationSettings>(),
-                mainGen.GetComponent<HexPreviewSettings>(),
-                mainGen.GetComponent<HexDebugSettings>()
+                mainGen.GetComponent<GridSettings>(),
+                mainGen.GetComponent<GenerationSettings>(),
+                mainGen.GetComponent<PreviewSettings>(),
+                mainGen.GetComponent<DebugSettings>()
             };
 
             sectionEditors = sections

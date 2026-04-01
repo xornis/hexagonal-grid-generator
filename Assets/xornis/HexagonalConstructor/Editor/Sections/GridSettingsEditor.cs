@@ -3,10 +3,10 @@ using UnityEditor;
 
 namespace HexagonalConstructor.Editor
 {
-    [CustomEditor(typeof(HexGridSettings))]
+    [CustomEditor(typeof(GridSettings))]
     public class GridSettingsEditor : UnityEditor.Editor, IEditorSection
     {
-        private HexGridSettings gridSettings;
+        private GridSettings gridSettings;
         private bool foldout = true;
 
         private bool tileVisualsFoldout = true;
@@ -14,7 +14,7 @@ namespace HexagonalConstructor.Editor
 
         private void OnEnable()
         {
-            gridSettings = (HexGridSettings)target;
+            gridSettings = (GridSettings)target;
         }
 
         public override void OnInspectorGUI()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HexagonalConstructor
 {
-    public abstract class RandomizedGenerator : SerializableHexGenerator
+    public abstract class RandomizedGenerator : SerializableGridGenerator
     {
         [SerializeField, Min(1)] protected int hexCount = 100;
         [SerializeField] protected bool useSeed;

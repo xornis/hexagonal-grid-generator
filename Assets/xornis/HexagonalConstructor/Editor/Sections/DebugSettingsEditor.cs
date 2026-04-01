@@ -4,15 +4,15 @@ using UnityEditor;
 
 namespace HexagonalConstructor.Editor
 {
-    [CustomEditor(typeof(HexDebugSettings))]
+    [CustomEditor(typeof(DebugSettings))]
     public class DebugSettingsEditor : UnityEditor.Editor, IEditorSection
     {
-        private HexDebugSettings debugSettings;
+        private DebugSettings debugSettings;
         private bool foldout = true;
 
         private void OnEnable()
         {
-            debugSettings = (HexDebugSettings)target;
+            debugSettings = (DebugSettings)target;
         }
 
         public override void OnInspectorGUI()

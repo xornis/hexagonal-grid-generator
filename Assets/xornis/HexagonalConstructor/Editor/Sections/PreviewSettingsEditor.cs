@@ -3,15 +3,15 @@ using UnityEditor;
 
 namespace HexagonalConstructor.Editor
 {
-    [CustomEditor(typeof(HexPreviewSettings))]
+    [CustomEditor(typeof(PreviewSettings))]
     public class PreviewSettingsEditor : UnityEditor.Editor, IEditorSection
     {
-        private HexPreviewSettings previewSettings;
+        private PreviewSettings previewSettings;
         private bool foldout = true;
 
         private void OnEnable()
         {
-            previewSettings = (HexPreviewSettings)target;
+            previewSettings = (PreviewSettings)target;
         }
 
         public override void OnInspectorGUI()
