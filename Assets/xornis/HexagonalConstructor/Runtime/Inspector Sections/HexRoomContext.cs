@@ -4,14 +4,17 @@ namespace HexDungeon
 {
     [RequireComponent(typeof(HexGridSettings))]
     [RequireComponent(typeof(HexGenerationSettings))]
-    [RequireComponent(typeof(HexDebugSettings))]
-    [RequireComponent(typeof(HexPreviewSettings))]
+    [RequireComponent(typeof(HexRoomGenerator))]
     public class HexRoomContext : MonoBehaviour
     {
         private HexGridSettings gridSettings;
         private HexGenerationSettings generationSettings;
+        private HexRoomGenerator generator;
+
+#if UNITY_EDITOR
         private HexDebugSettings debugSettings;
         private HexPreviewSettings previewSettings;
+#endif
 
         public HexGridSettings Grid
         {
@@ -33,6 +36,17 @@ namespace HexDungeon
             }
         }
 
+        public HexRoomGenerator Generator
+        {
+            get
+            {
+                if (generator == null)
+                    generator = GetComponent<HexRoomGenerator>();
+                return generator;
+            }
+        }
+
+#if UNITY_EDITOR
         public HexDebugSettings Debug
         {
             get
@@ -52,5 +66,6 @@ namespace HexDungeon
                 return previewSettings;
             }
         }
+#endif
     }
 }

@@ -20,27 +20,35 @@ namespace HexDungeon
 
         private void Start()
         {
-            if (context.Debug != null && context.Debug.IsDebugMode)
+            Generate();
+        }
+
+        public void Generate()
+        {
+            foreach (var hex in context.Generation.CurrentGenerator.Generate(context.Generation.StartHex))
+                SpawnHex(hex);
+        }
+
+        public IEnumerator GenerateWithDelay(float delay)
+        {
+            foreach (var hex in context.Generation.CurrentGenerator.Generate(context.Generation.StartHex))
             {
-                context.Debug.EditorClearInternal();
-                StartCoroutine(DebugGenerate());
+                SpawnHex(hex);
+                yield return new WaitForSeconds(delay);
             }
-            else
-                Generate();
         }
 
-        private void Generate()
+        public void ClearGeneration()
         {
-            foreach (var hex in context.Generation.CurrentGenerator.Generate(context.Generation.StartHex))
-                SpawnHex(hex);
-        }
+            StopAllCoroutines();
 
-        private IEnumerator DebugGenerate()
-        {
-            foreach (var hex in context.Generation.CurrentGenerator.Generate(context.Generation.StartHex))
+            for (int i = transform.childCount - 1; i >= 0; i--)
             {
-                SpawnHex(hex);
-                yield return new WaitForSeconds(context.Debug.StepDelay);
+#if UNITY_EDITOR
+                DestroyImmediate(transform.GetChild(i).gameObject);
+#else
+                Destroy(transform.GetChild(i).gameObject);
+#endif
             }
         }
 

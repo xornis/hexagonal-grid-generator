@@ -12,7 +12,7 @@ namespace HexDungeon
         private GridSettingsSection gridSettingsSection;
         private GenerationSettingsSection generationSettingsSection;
         private PreviewSettingsSection previewSettingsSection;
-        private DebugSettingsSection debugSettingsSection;
+        private DebugSettingsEditor debugSettingsSection;
 
         private void OnEnable()
         {
@@ -21,7 +21,7 @@ namespace HexDungeon
             gridSettingsSection = new GridSettingsSection(serializedObject);
             generationSettingsSection = new GenerationSettingsSection(serializedObject);
             previewSettingsSection = new PreviewSettingsSection(mainGen);
-            debugSettingsSection = new DebugSettingsSection(serializedObject, mainGen);
+            debugSettingsSection = new DebugSettingsEditor();
         }
 
         public override void OnInspectorGUI()

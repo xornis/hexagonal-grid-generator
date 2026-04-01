@@ -1,5 +1,4 @@
-using System;
-using System.Collections;
+#if UNITY_EDITOR
 using UnityEngine;
 
 namespace HexDungeon
@@ -9,23 +8,43 @@ namespace HexDungeon
         [SerializeField] private bool debugMode = false;
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
 
+        private HexRoomContext context;
+
         public bool IsDebugMode => debugMode;
         public float StepDelay => stepDelay;
 
-        public void EditorGenerateInternal(Action generateFunc, IEnumerator debugGenerateCoroutine)
+        private void Awake()
         {
-            EditorClearInternal();
-            StopAllCoroutines();
-            if (Application.isPlaying) StartCoroutine(debugGenerateCoroutine);
-            else generateFunc();
+            context = GetComponent<HexRoomContext>();
         }
 
-        public void EditorClearInternal()
+        private void Start()
         {
-            StopAllCoroutines();
+            if (debugMode && context != null)
+            {
+                context.Generator.ClearGeneration();
+                context.Generator.StartCoroutine(context.Generator.GenerateWithDelay(stepDelay));
+            }                                           
+        }
 
-            for (int i = transform.childCount - 1; i >= 0; i--)
-                DestroyImmediate(transform.GetChild(i).gameObject);
+        public void EditorGenerate()
+        {
+            if (context == null || context.Generator == null) return;
+
+            context.Generator.ClearGeneration();
+            context.Generator.StopAllCoroutines();
+
+            if (Application.isPlaying) 
+                context.StartCoroutine(context.Generator.GenerateWithDelay(stepDelay));
+            else 
+                context.Generator.Generate();
+        }
+
+        public void EditorClear()
+        {
+            if (context != null && context.Generator != null)
+                context.Generator.ClearGeneration();
         }
     }
 }
+#endif
