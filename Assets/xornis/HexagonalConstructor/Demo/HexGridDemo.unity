@@ -129,7 +129,11 @@ GameObject:
   m_Component:
   - component: {fileID: 151163235}
   - component: {fileID: 151163234}
+  - component: {fileID: 151163240}
+  - component: {fileID: 151163239}
+  - component: {fileID: 151163238}
   - component: {fileID: 151163236}
+  - component: {fileID: 151163237}
   m_Layer: 0
   m_Name: HexConstructorDemo
   m_TagString: Untagged
@@ -149,32 +153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620da3779448e7e4c95561bb3f4427ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 5268574295593296186, guid: 8f46c1e10cd0e9b4a89a002ceaaae0d7, type: 3}
-  hexScale: 2
-  hexOrientation: 1
-  hexRadius: 1
-  startAxial: {x: 0, y: 0}
-  generationMode: 1
-  shapeGenerator:
-    rid: -2
-  randomizedGenerator:
-    rid: 499084304547053638
-  previewIsActive: 1
-  previewHexColor: {r: 0, g: 0, b: 0, a: 1}
-  previewHexScale: 0.8
-  debugMode: 1
-  stepDelay: 0.1
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 499084304547053638
-      type: {class: BranchWalkGenerator, ns: HexDungeon, asm: Assembly-CSharp}
-      data:
-        hexCount: 72
-        useSeed: 1
-        seed: 0
 --- !u!4 &151163235
 Transform:
   m_ObjectHideFlags: 0
@@ -200,6 +178,74 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d03a54c4f848e6145a8e5f897635f8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  previewIsActive: 1
+  previewHexColor: {r: 0, g: 0, b: 1, a: 1}
+  previewHexScale: 0.9
+--- !u!114 &151163237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef77a3c5bdb3a4d48ba8d980cad4f8d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMode: 0
+  stepDelay: 0.1
+--- !u!114 &151163238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee6f47f2038742e47abfb4a0021ae699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startAxial: {x: 0, y: 0}
+  generationMode: 0
+  shapeGenerator:
+    rid: -2
+  randomizedGenerator:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &151163239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fee4bfbb1473a409412f9fc53195b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hexPrefab: {fileID: 0}
+  hexScale: 1
+  hexOrientation: 0
+  hexRadius: 1
+--- !u!114 &151163240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c97be0c6332c04fb6958f1e8df5c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1984249227
