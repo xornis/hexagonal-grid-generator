@@ -26,7 +26,7 @@ namespace HexDungeon.Editor
             EditorHelper.DrawFoldout(ref foldout, previewSettings.GetType().Name, () =>
             {
                 var previewIsActiveProp = serializedObject.FindProperty("previewIsActive");
-                EditorHelper.DrawProperty(previewIsActiveProp.propertyPath, serializedObject);
+                EditorHelper.DrawProperties(serializedObject, previewIsActiveProp.propertyPath);
 
                 if (previewIsActiveProp.boolValue)
                 {
@@ -40,8 +40,7 @@ namespace HexDungeon.Editor
         {
             EditorHelper.Indent(() =>
             {
-                EditorHelper.DrawProperty("previewHexColor", serializedObject);
-                EditorHelper.DrawProperty("previewHexScale", serializedObject);
+                EditorHelper.DrawProperties(serializedObject, "previewHexColor", "previewHexScale");
             });
         }
 

@@ -27,7 +27,7 @@ namespace HexDungeon.Editor
             EditorHelper.DrawFoldout(ref foldout, debugSettings.GetType().Name, () =>
             {
                 var debugModeProp = serializedObject.FindProperty("debugMode");
-                EditorHelper.DrawProperty(debugModeProp.propertyPath, serializedObject);
+                EditorHelper.DrawProperties(serializedObject, debugModeProp.propertyPath);
 
                 if (debugModeProp.boolValue)
                 {
@@ -41,7 +41,7 @@ namespace HexDungeon.Editor
         {
             EditorHelper.Indent(() =>
             {
-                EditorHelper.DrawProperty("stepDelay", serializedObject);
+                EditorHelper.DrawProperties(serializedObject, "stepDelay");
             });
         }
 

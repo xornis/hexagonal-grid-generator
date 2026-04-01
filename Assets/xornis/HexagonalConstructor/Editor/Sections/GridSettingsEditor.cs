@@ -37,8 +37,7 @@ namespace HexDungeon.Editor
         {
             EditorHelper.DrawFoldout(ref tileVisualsFoldout, "Tile Visuals", () =>
             {
-                EditorHelper.DrawProperty("hexPrefab", serializedObject);
-                EditorHelper.DrawProperty("hexScale", serializedObject);
+                EditorHelper.DrawProperties(serializedObject, "hexPrefab", "hexScale");
             });
         }
 
@@ -46,8 +45,7 @@ namespace HexDungeon.Editor
         {
             EditorHelper.DrawFoldout(ref tileGeometryFoldout, "Tile Geometry", () => 
             {
-                EditorHelper.DrawProperty("hexOrientation", serializedObject);
-                EditorHelper.DrawProperty("hexRadius", serializedObject);
+                EditorHelper.DrawProperties(serializedObject, "hexOrientation", "hexRadius");
             });
         }
     }

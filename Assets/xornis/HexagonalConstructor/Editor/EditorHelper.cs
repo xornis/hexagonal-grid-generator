@@ -8,11 +8,14 @@ namespace HexDungeon.Editor
 {
     public static class EditorHelper 
     {
-        public static void DrawProperty(string name, SerializedObject serializedObject)
+        public static void DrawProperties(SerializedObject serializedObject, params string[] names)
         {
-            var prop = serializedObject.FindProperty(name);
-            if (prop != null) EditorGUILayout.PropertyField(prop, true);
-            else EditorGUILayout.HelpBox($"Property '{name}' not found", MessageType.Warning);
+            foreach (var name in names)
+            {
+                var prop = serializedObject.FindProperty(name);
+                if (prop != null) EditorGUILayout.PropertyField(prop, true);
+                else EditorGUILayout.HelpBox($"Property '{names}' not found", MessageType.Warning);
+            }
         }
 
         public static void DrawButton(string name, Action onClick)

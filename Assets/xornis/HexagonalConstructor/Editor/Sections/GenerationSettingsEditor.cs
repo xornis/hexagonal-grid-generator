@@ -33,7 +33,7 @@ namespace HexDungeon.Editor
 
         private void DrawStartAxial()
         {
-            EditorHelper.DrawProperty("startAxial", serializedObject);
+            EditorHelper.DrawProperties(serializedObject, "startAxial");
         }
 
         private void DrawGenerationMode()
@@ -44,8 +44,7 @@ namespace HexDungeon.Editor
 
             EditorHelper.Indent(() =>
             {
-                EditorHelper.DrawProperty(generationModeProp.propertyPath, serializedObject);
-                EditorHelper.DrawProperty(generatorProp, serializedObject);
+                EditorHelper.DrawProperties(serializedObject, generationModeProp.propertyPath, generatorProp);
             });
 
             //DrawButton("Randomize Seed", EditorRandomizeSeedInternal);
