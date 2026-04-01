@@ -16,12 +16,12 @@ namespace HexDungeon.Editor
 
         public override void OnInspectorGUI()
         {
+            serializedObject.Update();
+            serializedObject.ApplyModifiedProperties();
         }
 
         public void Draw()
         {
-            serializedObject.Update();
-
             var debugModeProp = serializedObject.FindProperty("debugMode");
             EditorHelper.DrawProperty(debugModeProp.propertyPath, serializedObject);
 
@@ -30,8 +30,6 @@ namespace HexDungeon.Editor
                 DrawFields();
                 DrawButtons();
             }
-
-            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawFields()

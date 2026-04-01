@@ -3,6 +3,7 @@ using UnityEditor;
 
 namespace HexDungeon.Editor
 {
+    [CustomEditor(typeof(HexGridSettings))]
     public class GridSettingsEditor : UnityEditor.Editor
     {
         private HexGridSettings gridSettings;
@@ -17,20 +18,17 @@ namespace HexDungeon.Editor
 
         public override void OnInspectorGUI()
         {
-            Draw();
+            serializedObject.Update();
+            serializedObject.ApplyModifiedProperties();
         }
 
         public void Draw()
         {
-            serializedObject.Update();
-
             EditorHelper.Indent(() =>
             {
                 DrawTileVisuals();
                 DrawTileGeometry();
             });
-            
-            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawTileVisuals()

@@ -28,7 +28,7 @@ namespace HexDungeon
             var sections = new Component[]
             {
                 mainGen.GetComponent<HexGridSettings>(),
-                //mainGen.GetComponent<HexGenerationSettings>(),
+                mainGen.GetComponent<HexGenerationSettings>(),
                 //mainGen.GetComponent<HexPreviewSettings>(),
                 mainGen.GetComponent<HexDebugSettings>()
             };

@@ -3,23 +3,27 @@ using UnityEditor;
 
 namespace HexDungeon.Editor
 {
-    public class GenerationSettingsSection
+    [CustomEditor(typeof(HexGenerationSettings))]
+    public class GenerationSettingsEditor : UnityEditor.Editor
     {
-        private readonly SerializedObject serializedObject;
+        private HexGenerationSettings generationSettings;
 
         private bool foldout = true;
 
-        public GenerationSettingsSection(SerializedObject serializedObject)
+        private void OnEnable()
         {
-            this.serializedObject = serializedObject;
+            generationSettings = (HexGenerationSettings)target;
+        }
+        
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            serializedObject.ApplyModifiedProperties();
         }
 
         public void Draw()
         {
-            foldout = EditorGUILayout.Foldout(foldout, "Generation Settings", true, EditorStyles.foldoutHeader);
-            if (!foldout) return;
-
-            EditorHelper.Indent(() =>
+            EditorHelper.DrawFoldout(ref foldout, generationSettings.name, () =>
             {
                 DrawStartAxial();
                 EditorGUILayout.Space(6);
@@ -40,7 +44,7 @@ namespace HexDungeon.Editor
 
             EditorHelper.Indent(() =>
             {
-                EditorHelper.DrawProperty("generationMode", serializedObject);
+                EditorHelper.DrawProperty(generationModeProp.propertyPath, serializedObject);
                 EditorHelper.DrawProperty(generatorProp, serializedObject);
             });
 
