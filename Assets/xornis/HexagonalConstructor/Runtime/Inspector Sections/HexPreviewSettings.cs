@@ -98,13 +98,5 @@ namespace HexDungeon
             SceneView.RepaintAll();
         }
     }
-
-    [CustomEditor(typeof(HexPreviewSettings))]
-    public class HexRoomGeneratorPreviewEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-        }
-    }
 }
 #endif
