@@ -9,15 +9,8 @@ namespace HexagonalConstructor
     };
 
     [RequireComponent(typeof(GeneratorContext))]
-    public class GridGenerator : MonoBehaviour
+    public class GridGenerator : ContextBehaviour
     {
-        private GeneratorContext context;
-
-        private void Awake()
-        {
-            context = GetComponent<GeneratorContext>();
-        }
-
         private void Start()
         {
             Generate();
@@ -25,13 +18,13 @@ namespace HexagonalConstructor
 
         public void Generate()
         {
-            foreach (var hex in context.Generation.CurrentGenerator.Generate(context.Generation.StartHex))
+            foreach (var hex in Context.Generation.CurrentGenerator.Generate(Context.Generation.StartHex))
                 SpawnHex(hex);
         }
 
         public IEnumerator GenerateWithDelay(float delay)
         {
-            foreach (var hex in context.Generation.CurrentGenerator.Generate(context.Generation.StartHex))
+            foreach (var hex in Context.Generation.CurrentGenerator.Generate(Context.Generation.StartHex))
             {
                 SpawnHex(hex);
                 yield return new WaitForSeconds(delay);
@@ -54,9 +47,9 @@ namespace HexagonalConstructor
 
         private void SpawnHex(HexCoord hex)
         {
-            Vector3 pos = context.Grid.HexLayout.HexToWorld(hex);
-            var instance = Instantiate(context.Grid.HexPrefab, pos, Quaternion.identity, transform);
-            instance.transform.localScale = Vector3.one * context.Grid.HexScale;
+            Vector3 pos = Context.Grid.HexLayout.HexToWorld(hex);
+            var instance = Instantiate(Context.Grid.HexPrefab, pos, Quaternion.identity, transform);
+            instance.transform.localScale = Vector3.one * Context.Grid.HexScale;
         }
     }
 }

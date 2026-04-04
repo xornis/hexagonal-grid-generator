@@ -3,47 +3,41 @@ using UnityEngine;
 
 namespace HexagonalConstructor
 {
-    public class DebugSettings : MonoBehaviour
+    public class DebugSettings : ContextBehaviour
     {
         [SerializeField] private bool isActive = false;
         [SerializeField, Tooltip("Works only in Play Mode")] private float stepDelay = 0.1f;
 
-        private GeneratorContext context;
-
         public bool IsDebugMode => isActive;
         public float StepDelay => stepDelay;
 
-        private void Awake()
-        {
-            context = GetComponent<GeneratorContext>();
-        }
-
         private void Start()
         {
-            if (isActive && context != null)
+            if (isActive && Context != null)
             {
-                context.Generator.ClearGeneration();
-                context.Generator.StartCoroutine(context.Generator.GenerateWithDelay(stepDelay));
+                
+                Context.Generator.ClearGeneration();
+                Context.Generator.StartCoroutine(Context.Generator.GenerateWithDelay(stepDelay));
             }                                           
         }
 
         public void EditorGenerate()
         {
-            if (context == null || context.Generator == null) return;
+            if (Context == null || Context.Generator == null) return;
 
-            context.Generator.ClearGeneration();
-            context.Generator.StopAllCoroutines();
+            Context.Generator.ClearGeneration();
+            Context.Generator.StopAllCoroutines();
 
             if (Application.isPlaying) 
-                context.StartCoroutine(context.Generator.GenerateWithDelay(stepDelay));
+                Context.StartCoroutine(Context.Generator.GenerateWithDelay(stepDelay));
             else 
-                context.Generator.Generate();
+                Context.Generator.Generate();
         }
 
         public void EditorClear()
         {
-            if (context != null && context.Generator != null)
-                context.Generator.ClearGeneration();
+            if (Context != null && Context.Generator != null)
+                Context.Generator.ClearGeneration();
         }
     }
 }

@@ -6,25 +6,18 @@ using UnityEngine;
 namespace HexagonalConstructor
 {
     [ExecuteInEditMode]
-    public class PreviewSettings : MonoBehaviour
+    public class PreviewSettings : ContextBehaviour
     {
         [SerializeField] private bool isActive = true;
         [SerializeField] private Color hexColor = Color.blue;
         [SerializeField, Range(0.1f, 1.5f)] private float hexScale = 0.9f;
 
-        private GeneratorContext context;
-
         private List<HexCoord> previewCache = new List<HexCoord>();
         private bool previewDirty = true;
 
-        public void OnEnable()
-        {
-            context = GetComponent<GeneratorContext>();
-        }
-
         private void RebuildPreview()
         {
-            var previewGen = context.Generation.CurrentGenerator;
+            var previewGen = Context.Generation.CurrentGenerator;
 
             if (previewGen == null)
             {
@@ -34,7 +27,7 @@ namespace HexagonalConstructor
 
             previewCache.Clear();
 
-            foreach (var hex in previewGen.Generate(context.Generation.StartHex))
+            foreach (var hex in previewGen.Generate(Context.Generation.StartHex))
                 previewCache.Add(hex);
         }
 
@@ -50,8 +43,8 @@ namespace HexagonalConstructor
 
             foreach (var hex in previewCache)
             {
-                Vector3 center = transform.TransformPoint(context.Grid.HexLayout.HexToWorld(hex));
-                DrawHexHandle(center, context.Grid.HexLayout, hexScale);
+                Vector3 center = transform.TransformPoint(Context.Grid.HexLayout.HexToWorld(hex));
+                DrawHexHandle(center, Context.Grid.HexLayout, hexScale);
             }
         }
 
@@ -59,7 +52,7 @@ namespace HexagonalConstructor
         {
             float radius = layout.Size * scale;
 
-            float startAngle = context.Grid.HexOrientation == HexOrientation.FlatTop ? 0f : 30f;
+            float startAngle = Context.Grid.HexOrientation == HexOrientation.FlatTop ? 0f : 30f;
 
             Vector3 firstPoint = Vector3.zero;
 
