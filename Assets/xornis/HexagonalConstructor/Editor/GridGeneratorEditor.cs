@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace HexagonalConstructor
+namespace HexagonalConstructor.Editor
 {
     public interface IEditorSection
     {
