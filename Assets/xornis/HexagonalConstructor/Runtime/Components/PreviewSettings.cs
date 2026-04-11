@@ -77,19 +77,6 @@ namespace HexagonalConstructor
 
             Handles.DrawLine(prev, firstPoint);
         }
-
-        public void EditorForcePreviewRebuild()
-        {
-            previewDirty = true;
-            RebuildPreview();
-            SceneView.RepaintAll();
-        }
-
-        public void EditorClearPreviewInternal()
-        {
-            previewCache.Clear();
-            SceneView.RepaintAll();
-        }
     }
 }
 #endif

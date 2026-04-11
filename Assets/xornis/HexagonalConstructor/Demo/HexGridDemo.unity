@@ -193,11 +193,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startAxial: {x: 0, y: 0}
-  generationMode: 0
+  generationMode: 1
   shapeGenerator:
     rid: 5828956703352160326
   randomizedGenerator:
-    rid: 5828956703352160327
+    rid: 5828956703352160329
   references:
     version: 2
     RefIds:
@@ -205,13 +205,13 @@ MonoBehaviour:
       type: {class: SpiralGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
       data:
         spiralLength: 32
-        startDirection: 5
+        startDirection: 0
         growth: 1
-    - rid: 5828956703352160327
-      type: {class: ClusterGrowthGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+    - rid: 5828956703352160329
+      type: {class: BranchWalkGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
       data:
-        hexCount: 114
-        useSeed: 0
+        hexCount: 100
+        useSeed: 1
         seed: 0
 --- !u!114 &151163242
 MonoBehaviour:
@@ -225,9 +225,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36fee4bfbb1473a409412f9fc53195b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 367564799919000248, guid: d824d8627b2547744bcf39e995b47b47, type: 3}
+  hexPrefab: {fileID: 5268574295593296186, guid: 8f46c1e10cd0e9b4a89a002ceaaae0d7, type: 3}
   hexScale: 1.9
-  hexOrientation: 0
+  hexOrientation: 1
   hexRadius: 1
 --- !u!114 &151163243
 MonoBehaviour:

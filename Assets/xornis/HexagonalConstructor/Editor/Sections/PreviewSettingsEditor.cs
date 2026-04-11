@@ -20,10 +20,7 @@ namespace HexagonalConstructor.Editor
                 EditorHelper.DrawProperties(serializedObject, previewIsActiveProp.propertyPath);
 
                 if (previewIsActiveProp.boolValue)
-                {
                     DrawPreviewFields();
-                    DrawPreviewButtons();
-                }
             });
 
             serializedObject.ApplyModifiedProperties();
@@ -35,14 +32,6 @@ namespace HexagonalConstructor.Editor
             {
                 EditorHelper.DrawProperties(serializedObject, "hexColor", "hexScale");
             });
-        }
-
-        private void DrawPreviewButtons()
-        {
-            EditorGUILayout.BeginHorizontal();
-            EditorHelper.DrawButton("Rebuild Preview", Settings.EditorForcePreviewRebuild);
-            EditorHelper.DrawButton("Clear Preview", Settings.EditorClearPreviewInternal);
-            EditorGUILayout.EndHorizontal();
         }
     }
 }
