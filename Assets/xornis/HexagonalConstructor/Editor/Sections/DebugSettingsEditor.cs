@@ -5,26 +5,17 @@ using UnityEditor;
 namespace HexagonalConstructor.Editor
 {
     [CustomEditor(typeof(DebugSettings))]
-    public class DebugSettingsEditor : UnityEditor.Editor, IEditorSection
+    public class DebugSettingsEditor : SettingsEditorBase
     {
-        private DebugSettings debugSettings;
         private bool foldout = true;
 
-        private void OnEnable()
-        {
-            debugSettings = (DebugSettings)target;
-        }
+        private DebugSettings Settings => (DebugSettings)target;
 
-        public override void OnInspectorGUI()
+        public override void Draw()
         {
             serializedObject.Update();
-            Draw();
-            serializedObject.ApplyModifiedProperties();
-        }
 
-        public void Draw()
-        {
-            EditorHelper.DrawFoldout(ref foldout, debugSettings.GetType().Name, () =>
+            EditorHelper.DrawFoldout(ref foldout, Settings.GetType().Name, () =>
             {
                 var debugModeProp = serializedObject.FindProperty("isActive");
                 EditorHelper.DrawProperties(serializedObject, debugModeProp.propertyPath);
@@ -35,6 +26,8 @@ namespace HexagonalConstructor.Editor
                     DrawButtons();
                 }
             });
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawFields()
@@ -48,8 +41,8 @@ namespace HexagonalConstructor.Editor
         private void DrawButtons()
         {
             EditorGUILayout.BeginHorizontal();
-            EditorHelper.DrawButton("Rebuild Generation", debugSettings.EditorGenerate);
-            EditorHelper.DrawButton("Clear Generation", debugSettings.EditorClear);
+            EditorHelper.DrawButton("Rebuild Generation", Settings.EditorGenerate);
+            EditorHelper.DrawButton("Clear Generation", Settings.EditorClear);
             EditorGUILayout.EndHorizontal();
         }
     }

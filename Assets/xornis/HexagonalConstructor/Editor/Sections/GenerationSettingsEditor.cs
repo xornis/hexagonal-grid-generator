@@ -4,31 +4,23 @@ using UnityEditor;
 namespace HexagonalConstructor.Editor
 {
     [CustomEditor(typeof(GenerationSettings))]
-    public class GenerationSettingsEditor : UnityEditor.Editor, IEditorSection
+    public class GenerationSettingsEditor : SettingsEditorBase
     {
-        private GenerationSettings generationSettings;
-
         private bool foldout = true;
 
-        private void OnEnable()
-        {
-            generationSettings = (GenerationSettings)target;
-        }
-        
-        public override void OnInspectorGUI()
+        private GenerationSettings Settings => (GenerationSettings)target;
+
+        public override void Draw()
         {
             serializedObject.Update();
-            Draw();
-            serializedObject.ApplyModifiedProperties();
-        }
 
-        public void Draw()
-        {
-            EditorHelper.DrawFoldout(ref foldout, generationSettings.GetType().Name, () =>
+            EditorHelper.DrawFoldout(ref foldout, Settings.GetType().Name, () =>
             {
                 DrawStartAxial();
                 DrawGenerationMode();
             });
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawStartAxial()

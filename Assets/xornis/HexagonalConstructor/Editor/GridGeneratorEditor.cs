@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -25,6 +25,36 @@ namespace HexagonalConstructor.Editor
         private void OnDisable()
         {
             DestroyEditors();
+        }
+
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update(); 
+
+            if (!ValidateRequiredComponents())
+            {
+                EditorGUILayout.HelpBox("GridGenerator requires: GeneratorContext, GridSettings, GenerationSettings", MessageType.Error);
+
+                if (GUILayout.Button("Add Required Components"))
+                {
+                    AddRequiredComponents();
+                    InitializeEditors();
+                }
+
+                serializedObject.ApplyModifiedProperties();
+                return;
+            }
+
+            DrawSections();
+
+            if (!ValidateOptionalComponents())
+            {
+                EditorGUILayout.HelpBox("Optional components: PreviewSettings, DebugSettings", MessageType.None);
+                if (GUILayout.Button("Add Optional Components"))
+                    AddOptionalComponents();
+            }
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void InitializeEditors()
@@ -56,20 +86,49 @@ namespace HexagonalConstructor.Editor
             sectionEditors = null;
         }
 
-        public override void OnInspectorGUI()
+        private void DrawSections()
         {
-            serializedObject.Update(); // Loading MonoBehaviour fields to SerializedObject
+            if (sectionEditors == null) return;
 
-            if (sectionEditors != null)
+            foreach (var editor in sectionEditors)
             {
-                foreach (var editor in sectionEditors)
-                {
-                    if (editor != null)
-                        editor.OnInspectorGUI();
-                }
+                if (editor != null && editor is IEditorSection section)
+                    section.Draw();
             }
+        }
 
-            serializedObject.ApplyModifiedProperties(); // Saving changes made in the Inspector
+        private bool ValidateRequiredComponents()
+        {
+            return mainGen.GetComponent<GeneratorContext>() != null
+                && mainGen.GetComponent<GridSettings>() != null 
+                && mainGen.GetComponent<GenerationSettings>() != null;
+        }
+
+        private bool ValidateOptionalComponents()
+        {
+            return mainGen.GetComponent<PreviewSettings>() != null 
+                && mainGen.GetComponent<DebugSettings>() != null;
+        }
+
+        private void AddRequiredComponents()
+        {
+            AddComponent<GeneratorContext>();
+            AddComponent<GridSettings>();
+            AddComponent<GenerationSettings>();
+        }
+        
+        private void AddOptionalComponents()
+        {
+            AddComponent<PreviewSettings>();
+            AddComponent<DebugSettings>();
+        }
+
+        private void AddComponent<T>() where T : Component
+        {
+            var component = mainGen.GetComponent<T>();
+
+            if (component == null)
+                mainGen.gameObject.AddComponent<T>();
         }
     }
 }

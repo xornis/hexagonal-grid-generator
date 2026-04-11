@@ -8,11 +8,21 @@ namespace HexagonalConstructor
         Shapes, Randomized
     };
 
-    [RequireComponent(typeof(GeneratorContext))]
     public class GridGenerator : ContextBehaviour
     {
         private void Start()
         {
+            if (Context == null || Context.Grid == null || Context.Generation == null)
+            {
+                Debug.LogError(
+                    $"[GridGenerator] Missing required components on '{gameObject.name}'. " +
+                    "Add GeneratorContext, GridSettings, and GenerationSettings.",
+                    this
+                );
+                enabled = false;
+                return;
+            }
+
             Generate();
         }
 

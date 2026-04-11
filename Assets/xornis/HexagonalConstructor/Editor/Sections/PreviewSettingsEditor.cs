@@ -4,26 +4,17 @@ using UnityEditor;
 namespace HexagonalConstructor.Editor
 {
     [CustomEditor(typeof(PreviewSettings))]
-    public class PreviewSettingsEditor : UnityEditor.Editor, IEditorSection
+    public class PreviewSettingsEditor : SettingsEditorBase
     {
-        private PreviewSettings previewSettings;
         private bool foldout = true;
 
-        private void OnEnable()
-        {
-            previewSettings = (PreviewSettings)target;
-        }
+        private PreviewSettings Settings => (PreviewSettings)target;
 
-        public override void OnInspectorGUI()
+        public override void Draw()
         {
             serializedObject.Update();
-            Draw();
-            serializedObject.ApplyModifiedProperties();
-        }
 
-        public void Draw()
-        {
-            EditorHelper.DrawFoldout(ref foldout, previewSettings.GetType().Name, () =>
+            EditorHelper.DrawFoldout(ref foldout, Settings.GetType().Name, () =>
             {
                 var previewIsActiveProp = serializedObject.FindProperty("isActive");
                 EditorHelper.DrawProperties(serializedObject, previewIsActiveProp.propertyPath);
@@ -34,6 +25,8 @@ namespace HexagonalConstructor.Editor
                     DrawPreviewButtons();
                 }
             });
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawPreviewFields()
@@ -47,8 +40,8 @@ namespace HexagonalConstructor.Editor
         private void DrawPreviewButtons()
         {
             EditorGUILayout.BeginHorizontal();
-            EditorHelper.DrawButton("Rebuild Preview", previewSettings.EditorForcePreviewRebuild);
-            EditorHelper.DrawButton("Clear Preview", previewSettings.EditorClearPreviewInternal);
+            EditorHelper.DrawButton("Rebuild Preview", Settings.EditorForcePreviewRebuild);
+            EditorHelper.DrawButton("Clear Preview", Settings.EditorClearPreviewInternal);
             EditorGUILayout.EndHorizontal();
         }
     }

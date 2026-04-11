@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace HexagonalConstructor
 {
-    [RequireComponent(typeof(GridSettings))]
-    [RequireComponent(typeof(GenerationSettings))]
-    [RequireComponent(typeof(GridGenerator))]
     public class GeneratorContext : MonoBehaviour
     {
         private GridSettings gridSettings;

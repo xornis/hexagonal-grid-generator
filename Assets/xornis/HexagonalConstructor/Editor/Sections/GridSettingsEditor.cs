@@ -4,33 +4,25 @@ using UnityEditor;
 namespace HexagonalConstructor.Editor
 {
     [CustomEditor(typeof(GridSettings))]
-    public class GridSettingsEditor : UnityEditor.Editor, IEditorSection
+    public class GridSettingsEditor : SettingsEditorBase
     {
-        private GridSettings gridSettings;
         private bool foldout = true;
-
         private bool tileVisualsFoldout = true;
         private bool tileGeometryFoldout = true;
 
-        private void OnEnable()
-        {
-            gridSettings = (GridSettings)target;
-        }
+        private GridSettings Settings => (GridSettings)target;
 
-        public override void OnInspectorGUI()
+        public override void Draw()
         {
             serializedObject.Update();
-            Draw();
-            serializedObject.ApplyModifiedProperties();
-        }
 
-        public void Draw()
-        {
-            EditorHelper.DrawFoldout(ref foldout, gridSettings.GetType().Name, () =>
+            EditorHelper.DrawFoldout(ref foldout, Settings.GetType().Name, () =>
             {
                 DrawTileVisuals();
                 DrawTileGeometry();
             });
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawTileVisuals()
