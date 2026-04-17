@@ -5,10 +5,10 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
-    [CustomPropertyDrawer(typeof(SerializableHexGenerator), true)]
-    public class HexGeneratorDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(SerializableGridGenerator), true)]
+    public class GridGeneratorDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

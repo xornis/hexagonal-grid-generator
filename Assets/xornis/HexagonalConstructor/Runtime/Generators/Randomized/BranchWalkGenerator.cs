@@ -1,4 +1,4 @@
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [System.Serializable]
     public class BranchWalkGenerator : RandomizedGenerator

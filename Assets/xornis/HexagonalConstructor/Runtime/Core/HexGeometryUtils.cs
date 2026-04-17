@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     internal static class HexGeometryUtils
     {

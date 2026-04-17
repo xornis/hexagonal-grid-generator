@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [System.Serializable]
     public class TriangleGenerator : ShapeGenerator

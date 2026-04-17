@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     [System.Serializable]
     public class DiskGenerator : ShapeGenerator

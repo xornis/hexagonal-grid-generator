@@ -1,6 +1,6 @@
-namespace HexDungeon
+namespace HexagonalConstructor
 {
-    public abstract class ShapeGenerator : SerializableHexGenerator
+    public abstract class ShapeGenerator : SerializableGridGenerator
     {
 
     }

@@ -1,4 +1,4 @@
-namespace HexDungeon
+namespace HexagonalConstructor
 {
     public enum HexDirection
     {

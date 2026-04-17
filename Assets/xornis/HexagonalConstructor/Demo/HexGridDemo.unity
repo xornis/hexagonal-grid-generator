@@ -129,6 +129,11 @@ GameObject:
   m_Component:
   - component: {fileID: 151163235}
   - component: {fileID: 151163234}
+  - component: {fileID: 151163240}
+  - component: {fileID: 151163242}
+  - component: {fileID: 151163241}
+  - component: {fileID: 151163244}
+  - component: {fileID: 151163243}
   m_Layer: 0
   m_Name: HexConstructorDemo
   m_TagString: Untagged
@@ -148,31 +153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620da3779448e7e4c95561bb3f4427ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 5268574295593296186, guid: 8f46c1e10cd0e9b4a89a002ceaaae0d7, type: 3}
-  hexScale: 2
-  hexOrientation: 1
-  hexRadius: 1
-  startAxial: {x: 0, y: 0}
-  randomAlgorithm: 0
-  roomCount: 1000
-  useSeed: 0
-  seed: 1834386650
-  generator:
-    rid: 499084208233250951
-  enablePreview: 1
-  previewColor: {r: 0, g: 0, b: 0, a: 1}
-  previewHexScale: 0.8
-  debugMode: 1
-  stepDelay: 0.1
-  references:
-    version: 2
-    RefIds:
-    - rid: 499084208233250951
-      type: {class: SpiralGenerator, ns: HexDungeon, asm: Assembly-CSharp}
-      data:
-        spiralLength: 50
-        startDirection: 5
-        growth: 1
 --- !u!4 &151163235
 Transform:
   m_ObjectHideFlags: 0
@@ -188,6 +168,96 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &151163240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2219e46b275601479c8602c83ffbd6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &151163241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee6f47f2038742e47abfb4a0021ae699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startAxial: {x: 0, y: 0}
+  generationMode: 1
+  shapeGenerator:
+    rid: 5828956703352160326
+  randomizedGenerator:
+    rid: 5828956703352160329
+  references:
+    version: 2
+    RefIds:
+    - rid: 5828956703352160326
+      type: {class: SpiralGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+      data:
+        spiralLength: 32
+        startDirection: 0
+        growth: 1
+    - rid: 5828956703352160329
+      type: {class: BranchWalkGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+      data:
+        hexCount: 100
+        useSeed: 1
+        seed: 0
+--- !u!114 &151163242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fee4bfbb1473a409412f9fc53195b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hexPrefab: {fileID: 5268574295593296186, guid: 8f46c1e10cd0e9b4a89a002ceaaae0d7, type: 3}
+  hexScale: 1.9
+  hexOrientation: 1
+  hexRadius: 1
+--- !u!114 &151163243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5b2314ebf552034aadaf6ab5b1fe686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 1
+  stepDelay: 0.1
+--- !u!114 &151163244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151163233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d03a54c4f848e6145a8e5f897635f8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 1
+  hexColor: {r: 0, g: 0, b: 0, a: 1}
+  hexScale: 0.9
 --- !u!1 &1984249227
 GameObject:
   m_ObjectHideFlags: 0
