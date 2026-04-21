@@ -5,7 +5,7 @@ namespace HexagonalConstructor
     public class GridSettings : MonoBehaviour
     {
         [SerializeField, Tooltip("Note: Hex sprite must be oriented correctly. Generator does NOT auto-rotate sprites.")] private GameObject hexPrefab;
-        [SerializeField] private float hexScale = 1f;
+        [SerializeField] private float hexScale = 1.9f;
         [SerializeField] private HexOrientation hexOrientation = HexOrientation.FlatTop;
         [SerializeField] private float hexRadius = 1f;
 

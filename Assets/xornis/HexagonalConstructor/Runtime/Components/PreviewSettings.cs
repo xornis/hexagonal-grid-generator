@@ -9,7 +9,7 @@ namespace HexagonalConstructor
     public class PreviewSettings : ContextBehaviour
     {
         [SerializeField] private bool isActive = true;
-        [SerializeField] private Color hexColor = Color.blue;
+        [SerializeField] private Color hexColor = Color.yellow;
         [SerializeField, Range(0.1f, 1.5f)] private float hexScale = 0.9f;
 
         private List<HexCoord> previewCache = new List<HexCoord>();

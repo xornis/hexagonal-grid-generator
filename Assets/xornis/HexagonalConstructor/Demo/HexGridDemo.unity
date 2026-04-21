@@ -212,7 +212,7 @@ MonoBehaviour:
       data:
         hexCount: 100
         useSeed: 1
-        seed: 0
+        seed: 15
 --- !u!114 &151163242
 MonoBehaviour:
   m_ObjectHideFlags: 0
