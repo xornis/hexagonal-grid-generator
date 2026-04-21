@@ -5,7 +5,7 @@ namespace HexagonalConstructor
     [System.Serializable]
     public class ClusterGrowthGenerator : RandomizedGenerator
     {
-        protected override void ExecuteAlgorithm(HexCoord start)
+        protected override void ExecuteAlgorithm(HexCoord start, HashSet<HexCoord> rooms)
         {
             for (int i = rooms.Count; i < hexCount;)
             {
