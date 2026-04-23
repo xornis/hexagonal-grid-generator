@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+
 namespace HexagonalConstructor
 {
     [System.Serializable]
     public class BranchWalkGenerator : RandomizedGenerator
     {
-        protected override void ExecuteAlgorithm(HexCoord start)
+        protected override void ExecuteAlgorithm(HexCoord start, HashSet<HexCoord> rooms)
         {
             HexCoord current = start;
             HexCoord? previous = null;

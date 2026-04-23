@@ -1,0 +1,48 @@
+# Hexagonal Constructor - Changelog
+
+## [2.0] - 2026-04-17
+
+## [Unreleased]
+### Added
+- Modular Inspector mode (toggle between unified/separate components)
+- Rhombus Shape
+### Changed
+- Planning to improve UX seed randomization
+
+### Added
+- "ContextBehaviour" base class for lazy component initialization
+- Modular Settings architecture (GridSettings, GenerationSettings, PreviewSettings, DebugSettings)
+- "Add Missing Components" and "Add Optional Components" button for easy setup
+- Automatic preview updates when changing settings
+
+### Changed
+- **BREAKING:** Renamed namespace from "HexDungeon" to "HexagonalConstructor" 
+- **BREAKING:** Renamed "HexRoomGenerator" to "GridGenerator"
+- **BREAKING:** Renamed "HexRoomContext" to "GeneratorContext"
+- **BREAKING:** Reorganized folder structure (Settings, Context, Components)
+- Improved Inspector UI - modular sections
+
+### Removed
+- Manual preview rebuild buttons (replaced by automatic updates)
+- "Randomize Seed" button (functionality integrated into auto-preview updates)
+
+
+
+## [1.1] - 2025-12-04
+
+### Added
+- 2 new types of generations: ClusterGrowth and Spiral
+
+### Changed
+- Renamed sections and fields
+- Readability improvements in code
+- Instead of toggling (making gray) some fields, now hides them completely
+
+### Removed
+- Corridor Shape
+- Added Start Hex Coordinates
+
+
+
+## [1.0.0] - 2025-11-24
+- Initial release

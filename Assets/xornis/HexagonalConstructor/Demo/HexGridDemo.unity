@@ -212,7 +212,7 @@ MonoBehaviour:
       data:
         hexCount: 100
         useSeed: 1
-        seed: 0
+        seed: 15
 --- !u!114 &151163242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  hexColor: {r: 0, g: 0, b: 0, a: 1}
+  hexColor: {r: 1, g: 1, b: 0, a: 1}
   hexScale: 0.9
 --- !u!1 &1984249227
 GameObject:

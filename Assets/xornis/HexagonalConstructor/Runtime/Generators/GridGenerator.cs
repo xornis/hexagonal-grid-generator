@@ -23,6 +23,11 @@ namespace HexagonalConstructor
                 return;
             }
 
+#if UNITY_EDITOR
+            if (Context.Debug != null && Context.Debug.IsDebugMode)
+                return;
+#endif
+
             Generate();
         }
 

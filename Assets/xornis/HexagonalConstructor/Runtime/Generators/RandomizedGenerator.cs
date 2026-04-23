@@ -9,21 +9,21 @@ namespace HexagonalConstructor
         [SerializeField] protected bool useSeed;
         [SerializeField, Tooltip("Works only when useSeed is true")] protected int seed;
 
-        protected HashSet<HexCoord> rooms = new HashSet<HexCoord>();
-
         public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
-            rooms.Clear();
+            var rooms = new HashSet<HexCoord>();
+
+            //rooms.Clear();
             RandomizeSeed();
             rooms.Add(start);
             
-            ExecuteAlgorithm(start);
+            ExecuteAlgorithm(start, rooms);
 
             foreach (var hex in rooms)
                 yield return hex;
         }
 
-        protected abstract void ExecuteAlgorithm(HexCoord start);
+        protected abstract void ExecuteAlgorithm(HexCoord start, HashSet<HexCoord> rooms);
 
         protected HexCoord GetNextStep(HexCoord current, HexCoord? previous, HashSet<HexCoord> rooms)
         {
