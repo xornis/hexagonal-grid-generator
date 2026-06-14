@@ -22,6 +22,8 @@ namespace HexagonalConstructor.Editor
         {
             mainGen = (GridGenerator)target;
             InitializeEditors();
+
+            hideComponents = SessionState.GetBool("HideComponents_" + mainGen.gameObject.GetInstanceID(), hideComponents);
         }
 
         private void OnDisable()
@@ -47,9 +49,7 @@ namespace HexagonalConstructor.Editor
                 return;
             }
 
-            var getValue = SessionState.GetBool("HideComponents_" + mainGen.gameObject.GetInstanceID(), hideComponents);
-            hideComponents = GUILayout.Toggle(getValue, "Hide Components");
-            ToggleComponentsVisibility(hideComponents);
+            ChangeComponentsVisibility();
 
             DrawSections();
 
@@ -103,6 +103,34 @@ namespace HexagonalConstructor.Editor
             }
         }
 
+        private void ChangeComponentsVisibility()
+        {
+            EditorGUI.BeginChangeCheck();
+            hideComponents = GUILayout.Toggle(hideComponents, "Hide Components");
+            if (EditorGUI.EndChangeCheck()) ToggleComponentsVisibility(hideComponents);
+        }
+
+        private void ToggleComponentsVisibility(bool state)
+        {
+            var components = new Component[]
+            {
+                mainGen.GetComponent<GridSettings>(),
+                mainGen.GetComponent<GenerationSettings>(),
+                mainGen.GetComponent<PreviewSettings>(),
+                mainGen.GetComponent<DebugSettings>(),
+                mainGen.GetComponent<GeneratorContext>()
+            };
+
+            foreach (var c in components)
+            {
+                if (c == null) continue;
+                c.hideFlags = state ? HideFlags.HideInInspector : HideFlags.None;
+                SessionState.SetBool("HideComponents_" + mainGen.gameObject.GetInstanceID(), state);
+            }
+
+            EditorUtility.SetDirty(mainGen.gameObject);
+        }
+
         private bool ValidateRequiredComponents()
         {
             return mainGen.GetComponent<GeneratorContext>() != null
@@ -135,29 +163,6 @@ namespace HexagonalConstructor.Editor
 
             if (component == null)
                 mainGen.gameObject.AddComponent<T>();
-        }
-
-        private void ToggleComponentsVisibility(bool state)
-        {
-            var keyName = "HideComponents_" + mainGen.gameObject.GetInstanceID();
-
-            var components = new Component[]
-            {
-                mainGen.GetComponent<GridSettings>(),
-                mainGen.GetComponent<GenerationSettings>(),
-                mainGen.GetComponent<PreviewSettings>(),
-                mainGen.GetComponent<DebugSettings>(),
-                mainGen.GetComponent<GeneratorContext>()
-            };
-
-            foreach (var c in components)
-            {
-                if (c == null) continue;
-                c.hideFlags = state ? HideFlags.HideInInspector : HideFlags.None;
-                SessionState.SetBool(keyName, state);
-            }
-
-            EditorUtility.SetDirty(mainGen.gameObject);
         }
     }
 }
