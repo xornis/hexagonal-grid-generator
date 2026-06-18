@@ -15,7 +15,6 @@ namespace HexagonalConstructor
         {
             if (isActive && Context != null)
             {
-                
                 Context.Generator.ClearGeneration();
                 Context.Generator.StartCoroutine(Context.Generator.GenerateWithDelay(stepDelay));
             }                                           
