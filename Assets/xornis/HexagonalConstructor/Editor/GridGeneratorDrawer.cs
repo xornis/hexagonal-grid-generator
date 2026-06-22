@@ -38,7 +38,7 @@ namespace HexagonalConstructor
         private Rect GetAndShowPropertyDropdown(Rect position, SerializedProperty property, GUIContent label)
         {
             var buttonRect = EditorGUI.PrefixLabel(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), label);
-            var typeName = property.managedReferenceValue?.GetType().Name ?? "None";
+            var typeName = property.managedReferenceValue?.GetType().Name ?? "Choose Generator Type";
 
             if (EditorGUI.DropdownButton(buttonRect, new GUIContent(typeName), FocusType.Passive))
                 ShowTypeMenu(property, buttonRect);
@@ -48,20 +48,32 @@ namespace HexagonalConstructor
 
         private void ShowChildFields(Rect position, SerializedProperty property, Rect buttonRect)
         {
-            var child = property.Copy();
-            var endProperty = property.GetEndProperty();
-            child.NextVisible(true);
+            if (property.managedReferenceValue == null) return;
 
+            var propertyChild = property.Copy();
+            var nextElement = propertyChild.NextVisible(true);
+
+            var useSeedProp = property.FindPropertyRelative("useSeed");
+            
             float y = buttonRect.yMax + EditorGUIUtility.standardVerticalSpacing;
 
-            while (!SerializedProperty.EqualContents(child, endProperty))
+            int parentDepth = property.depth;
+
+            while (nextElement && propertyChild.depth > parentDepth)
             {
-                float height = EditorGUI.GetPropertyHeight(child, true);
+                if (propertyChild.name == "seed" && useSeedProp != null && !useSeedProp.boolValue)
+                {
+                    nextElement = propertyChild.NextVisible(false);
+                    continue;
+                }
+
+                float height = EditorGUI.GetPropertyHeight(propertyChild, true);
                 var fieldRect = new Rect(position.x, y, position.width, height);
-                EditorGUI.PropertyField(fieldRect, child, true);
-                y += height;
-                y += EditorGUIUtility.standardVerticalSpacing;
-                child.NextVisible(false);
+
+                EditorGUI.PropertyField(fieldRect, propertyChild, true);
+                y += height + EditorGUIUtility.standardVerticalSpacing;
+
+                nextElement = propertyChild.NextVisible(false);
             }
         }
 
@@ -80,12 +92,29 @@ namespace HexagonalConstructor
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            float height = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            float totalHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-            foreach (SerializedProperty child in property)
-                height += EditorGUI.GetPropertyHeight(child, true) + EditorGUIUtility.standardVerticalSpacing;
+            if (property.managedReferenceValue == null) return totalHeight;
 
-            return height;
+            var propertyChild = property.Copy();
+            var nextElement = propertyChild.NextVisible(true);
+            var useSeedProp = property.FindPropertyRelative("useSeed");
+
+            int parentDepth = property.depth;
+
+            while (nextElement && propertyChild.depth > parentDepth)
+            {
+                if (propertyChild.name == "seed" && useSeedProp != null && !useSeedProp.boolValue)
+                {
+                    nextElement = propertyChild.NextVisible(false);
+                    continue;
+                }
+
+                totalHeight += EditorGUI.GetPropertyHeight(propertyChild, true) + EditorGUIUtility.standardVerticalSpacing;
+                nextElement = propertyChild.NextVisible(false);
+            }
+
+            return totalHeight;
         }
     }
 }

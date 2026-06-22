@@ -193,26 +193,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startAxial: {x: 0, y: 0}
-  generationMode: 0
+  generationMode: 1
   shapeGenerator:
-    rid: 3691618783461451
+    rid: 2082218250111549526
   randomizedGenerator:
-    rid: 3691326160764998
+    rid: 2082218250111549521
   references:
     version: 2
     RefIds:
-    - rid: 3691326160764998
+    - rid: 2082218250111549521
       type: {class: ClusterGrowthGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
       data:
         hexCount: 100
-        useSeed: 1
-        seed: 0
-    - rid: 3691618783461451
-      type: {class: RectangleGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+        useSeed: 0
+        seed: 5
+    - rid: 2082218250111549526
+      type: {class: SpiralGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
       data:
-        width: 5
-        height: 5
-        isPointy: 1
+        spiralLength: 167
+        startDirection: 5
+        growth: 1
 --- !u!114 &151163242
 MonoBehaviour:
   m_ObjectHideFlags: 0
