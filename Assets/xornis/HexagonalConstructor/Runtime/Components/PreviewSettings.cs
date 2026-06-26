@@ -13,7 +13,7 @@ namespace HexagonalConstructor
         [SerializeField, Range(0.1f, 1.5f)] private float hexScale = 0.9f;
 
         private List<HexCoord> previewCache = new List<HexCoord>();
-        private bool previewDirty = true;
+        [System.NonSerialized] private bool previewDirty = true;
 
         private void RebuildPreview()
         {

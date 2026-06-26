@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 
+using HexagonalConstructor.Editor;
 using System;
 using System.Linq;
 using UnityEditor;
@@ -63,6 +64,10 @@ namespace HexagonalConstructor
             {
                 if (propertyChild.name == "seed" && useSeedProp != null && !useSeedProp.boolValue)
                 {
+                    EditorHelper.DrawButton("Rebuild Preview", () => 
+                    {
+                    });
+
                     nextElement = propertyChild.NextVisible(false);
                     continue;
                 }
