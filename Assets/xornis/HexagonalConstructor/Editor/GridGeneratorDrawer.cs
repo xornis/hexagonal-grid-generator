@@ -15,6 +15,9 @@ namespace HexagonalConstructor
         {
             EditorGUI.BeginProperty(position, label, property);
 
+            var useSeedProp = property.FindPropertyRelative("useSeed");
+            bool wasUsingSeed = useSeedProp != null && useSeedProp.boolValue;
+
             EditorGUI.BeginChangeCheck();
 
             var buttonRect = GetAndShowPropertyDropdown(position, property, label);
@@ -25,6 +28,17 @@ namespace HexagonalConstructor
 
             if (EditorGUI.EndChangeCheck())
             {
+                bool isUsingSeedNow = useSeedProp != null && useSeedProp.boolValue;
+                if (!wasUsingSeed && isUsingSeedNow)
+                {
+                    // Generate a fresh random seed automatically!
+                    var seedProp = property.FindPropertyRelative("seed");
+                    if (seedProp != null)
+                    {
+                        seedProp.intValue = UnityEngine.Random.Range(1, 999999);
+                    }
+                }
+
                 property.serializedObject.ApplyModifiedProperties();
                 EditorUtility.SetDirty(property.serializedObject.targetObject);
                 PreviewSettings.InvokeForceRebuild();
@@ -84,7 +98,24 @@ namespace HexagonalConstructor
                 float height = EditorGUI.GetPropertyHeight(propertyChild, true);
                 var fieldRect = new Rect(position.x, y, position.width, height);
 
-                EditorGUI.PropertyField(fieldRect, propertyChild, true);
+                if (propertyChild.name == "seed")
+                {
+                    float buttonWidth = 80f;
+                    var valueRect = new Rect(fieldRect.x, fieldRect.y, fieldRect.width - buttonWidth - 4f, fieldRect.height);
+                    var diceRect = new Rect(fieldRect.xMax - buttonWidth, fieldRect.y, buttonWidth, fieldRect.height);
+
+                    EditorGUI.PropertyField(valueRect, propertyChild, true);
+
+                    if (GUI.Button(diceRect, "Randomize"))
+                    {
+                        propertyChild.intValue = UnityEngine.Random.Range(1, 999999);
+
+                        property.serializedObject.ApplyModifiedProperties();
+                        PreviewSettings.InvokeForceRebuild();
+                    }
+                }
+                else EditorGUI.PropertyField(fieldRect, propertyChild, true);
+
                 y += height + EditorGUIUtility.standardVerticalSpacing;
 
                 nextElement = propertyChild.NextVisible(false);

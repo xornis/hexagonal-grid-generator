@@ -16,7 +16,6 @@ namespace HexagonalConstructor
             var rooms = new HashSet<HexCoord>();
 
             //rooms.Clear();
-            RandomizeSeed();
             rooms.Add(start);
             
             ExecuteAlgorithm(start, rooms);
@@ -56,11 +55,6 @@ namespace HexagonalConstructor
                 if (index-- == 0) return coord;
 
             return HexCoord.Zero;
-        }
-
-        public void RandomizeSeed()
-        {
-            if (useSeed) Random.InitState(seed);
         }
     }
 }
