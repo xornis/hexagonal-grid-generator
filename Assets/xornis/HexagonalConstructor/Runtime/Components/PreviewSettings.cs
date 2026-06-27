@@ -15,7 +15,9 @@ namespace HexagonalConstructor
         private List<HexCoord> previewCache = new List<HexCoord>();
         [System.NonSerialized] private bool previewDirty = true;
 
-        public static System.Action OnForceRebuild;
+        public static event System.Action OnForceRebuild;
+
+        public static void InvokeForceRebuild() => OnForceRebuild?.Invoke();
 
         private void OnEnable()
         {   

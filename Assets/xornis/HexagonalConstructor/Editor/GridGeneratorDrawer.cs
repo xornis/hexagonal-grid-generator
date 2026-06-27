@@ -27,7 +27,7 @@ namespace HexagonalConstructor
             {
                 property.serializedObject.ApplyModifiedProperties();
                 EditorUtility.SetDirty(property.serializedObject.targetObject);
-                PreviewSettings.OnForceRebuild?.Invoke();
+                PreviewSettings.InvokeForceRebuild();
             }
 
             EditorGUI.EndProperty();
@@ -43,7 +43,7 @@ namespace HexagonalConstructor
 
                     property.serializedObject.ApplyModifiedProperties();
                     EditorUtility.SetDirty(property.serializedObject.targetObject);
-                    PreviewSettings.OnForceRebuild?.Invoke();
+                    PreviewSettings.InvokeForceRebuild();
                 });
 
             menu.DropDown(buttonRect);

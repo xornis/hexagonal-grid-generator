@@ -25,7 +25,7 @@ namespace HexagonalConstructor.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                PreviewSettings.OnForceRebuild?.Invoke();
+                PreviewSettings.InvokeForceRebuild();
             }
             else serializedObject.ApplyModifiedProperties();
         }
