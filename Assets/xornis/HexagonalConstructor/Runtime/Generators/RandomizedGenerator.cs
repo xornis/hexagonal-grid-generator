@@ -9,6 +9,8 @@ namespace HexagonalConstructor
         [SerializeField] protected bool useSeed;
         [SerializeField, Tooltip("Works only when useSeed is true")] protected int seed;
 
+        public bool UseSeed => useSeed;
+
         public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
             var rooms = new HashSet<HexCoord>();

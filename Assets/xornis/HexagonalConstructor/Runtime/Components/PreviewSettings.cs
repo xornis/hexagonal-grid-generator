@@ -15,12 +15,32 @@ namespace HexagonalConstructor
         private List<HexCoord> previewCache = new List<HexCoord>();
         [System.NonSerialized] private bool previewDirty = true;
 
+        public static System.Action OnForceRebuild;
+
+        private void OnEnable()
+        {   
+            previewDirty = true;
+            OnForceRebuild += MarkDirty;
+        }
+
+        private void OnDisable()
+        {
+            OnForceRebuild -= MarkDirty;
+        }
+
+        private void MarkDirty()
+        {
+            previewDirty = true;
+            SceneView.RepaintAll();
+        }
+
         private void RebuildPreview()
         {
             var previewGen = Context.Generation.CurrentGenerator;
 
             if (previewGen == null)
             {
+                previewCache.Clear();
                 previewDirty = false;
                 return;
             }
@@ -29,12 +49,13 @@ namespace HexagonalConstructor
 
             foreach (var hex in previewGen.Generate(Context.Generation.StartHex))
                 previewCache.Add(hex);
+
+            previewDirty = false;
         }
 
         private void OnDrawGizmosSelected()
         {
-            if (!isActive) return;
-            if (!enabled) return;
+            if (!isActive || !enabled) return;
 
             if (previewDirty)
                 RebuildPreview();

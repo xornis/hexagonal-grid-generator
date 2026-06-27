@@ -15,10 +15,20 @@ namespace HexagonalConstructor
         {
             EditorGUI.BeginProperty(position, label, property);
 
+            EditorGUI.BeginChangeCheck();
+
             var buttonRect = GetAndShowPropertyDropdown(position, property, label);
 
-            EditorGUI.indentLevel++; ShowChildFields(position, property, buttonRect);
+            EditorGUI.indentLevel++; 
+            ShowChildFields(position, property, buttonRect);
             EditorGUI.indentLevel--;
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                property.serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
+                PreviewSettings.OnForceRebuild?.Invoke();
+            }
 
             EditorGUI.EndProperty();
         }
@@ -30,7 +40,10 @@ namespace HexagonalConstructor
                 menu.AddItem(new GUIContent(type.Name), false, () =>
                 {
                     property.managedReferenceValue = Activator.CreateInstance(type);
+
                     property.serializedObject.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(property.serializedObject.targetObject);
+                    PreviewSettings.OnForceRebuild?.Invoke();
                 });
 
             menu.DropDown(buttonRect);
@@ -64,10 +77,6 @@ namespace HexagonalConstructor
             {
                 if (propertyChild.name == "seed" && useSeedProp != null && !useSeedProp.boolValue)
                 {
-                    EditorHelper.DrawButton("Rebuild Preview", () => 
-                    {
-                    });
-
                     nextElement = propertyChild.NextVisible(false);
                     continue;
                 }
