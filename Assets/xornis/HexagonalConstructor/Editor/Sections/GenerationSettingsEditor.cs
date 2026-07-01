@@ -14,13 +14,20 @@ namespace HexagonalConstructor.Editor
         {
             serializedObject.Update();
 
+            EditorGUI.BeginChangeCheck();
+
             EditorHelper.DrawFoldout(ref foldout, Settings.GetType().Name, () =>
             {
                 DrawStartAxial();
                 DrawGenerationMode();
             });
 
-            serializedObject.ApplyModifiedProperties();
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                PreviewSettings.InvokeForceRebuild();
+            }
+            else serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawStartAxial()

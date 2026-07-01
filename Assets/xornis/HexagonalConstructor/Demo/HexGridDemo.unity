@@ -170,7 +170,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &151163240
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -182,7 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &151163241
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -193,29 +193,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startAxial: {x: 0, y: 0}
-  generationMode: 0
+  generationMode: 1
   shapeGenerator:
-    rid: 3691618783461451
+    rid: 2082218362041794640
   randomizedGenerator:
-    rid: 3691326160764998
+    rid: 2082218362041794637
   references:
     version: 2
     RefIds:
-    - rid: 3691326160764998
-      type: {class: ClusterGrowthGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+    - rid: 2082218362041794637
+      type: {class: BranchWalkGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
       data:
         hexCount: 100
-        useSeed: 1
+        useSeed: 0
         seed: 0
-    - rid: 3691618783461451
-      type: {class: RectangleGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
+    - rid: 2082218362041794640
+      type: {class: RhombusGenerator, ns: HexagonalConstructor, asm: Assembly-CSharp}
       data:
-        width: 5
-        height: 5
-        isPointy: 1
+        sideLength: 3
+        startDirection: 3
 --- !u!114 &151163242
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -231,7 +230,7 @@ MonoBehaviour:
   hexRadius: 1
 --- !u!114 &151163243
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -245,7 +244,7 @@ MonoBehaviour:
   stepDelay: 0.1
 --- !u!114 &151163244
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}

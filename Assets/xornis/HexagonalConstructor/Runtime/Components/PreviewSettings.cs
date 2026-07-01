@@ -13,7 +13,28 @@ namespace HexagonalConstructor
         [SerializeField, Range(0.1f, 1.5f)] private float hexScale = 0.9f;
 
         private List<HexCoord> previewCache = new List<HexCoord>();
-        private bool previewDirty = true;
+        [System.NonSerialized] private bool previewDirty = true;
+
+        public static event System.Action OnForceRebuild;
+
+        public static void InvokeForceRebuild() => OnForceRebuild?.Invoke();
+
+        private void OnEnable()
+        {   
+            previewDirty = true;
+            OnForceRebuild += MarkDirty;
+        }
+
+        private void OnDisable()
+        {
+            OnForceRebuild -= MarkDirty;
+        }
+
+        private void MarkDirty()
+        {
+            previewDirty = true;
+            SceneView.RepaintAll();
+        }
 
         private void RebuildPreview()
         {
@@ -21,6 +42,7 @@ namespace HexagonalConstructor
 
             if (previewGen == null)
             {
+                previewCache.Clear();
                 previewDirty = false;
                 return;
             }
@@ -29,12 +51,13 @@ namespace HexagonalConstructor
 
             foreach (var hex in previewGen.Generate(Context.Generation.StartHex))
                 previewCache.Add(hex);
+
+            previewDirty = false;
         }
 
         private void OnDrawGizmosSelected()
         {
-            if (!isActive) return;
-            if (!enabled) return;
+            if (!isActive || !enabled) return;
 
             if (previewDirty)
                 RebuildPreview();
