@@ -51,9 +51,7 @@ namespace HexagonalConstructor.Editor
                 return;
             }
 
-            var genSettings = mainGen.GetComponent<GenerationSettings>();
-            if (genSettings != null && genSettings.CurrentGenerator == null)
-                EditorGUILayout.HelpBox("Please select a Generator Type in Generation Settings before attempting to build the grid.", MessageType.Warning);
+            DrawSettingsWarnings();
 
             ChangeComponentsVisibility();
 
@@ -181,6 +179,18 @@ namespace HexagonalConstructor.Editor
 
             if (component == null)
                 mainGen.gameObject.AddComponent<T>();
+        }
+
+        private void DrawSettingsWarnings()
+        {
+            var gridSettings = mainGen.GetComponent<GridSettings>();
+            if (gridSettings != null && gridSettings.HexPrefab == null)
+                EditorGUILayout.HelpBox("Please assign a Hex Prefab in Grid Settings before attempting to build the grid.", MessageType.Warning);
+
+
+            var genSettings = mainGen.GetComponent<GenerationSettings>();
+            if (genSettings != null && genSettings.CurrentGenerator == null)
+                EditorGUILayout.HelpBox("Please select a Generator Type in Generation Settings before attempting to build the grid.", MessageType.Warning);
         }
     }
 }
