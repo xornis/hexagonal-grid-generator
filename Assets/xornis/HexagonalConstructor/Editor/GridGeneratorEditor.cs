@@ -51,6 +51,10 @@ namespace HexagonalConstructor.Editor
                 return;
             }
 
+            var genSettings = mainGen.GetComponent<GenerationSettings>();
+            if (genSettings != null && genSettings.CurrentGenerator == null)
+                EditorGUILayout.HelpBox("Please select a Generator Type in Generation Settings before attempting to build the grid.", MessageType.Warning);
+
             ChangeComponentsVisibility();
 
             DrawSections();
