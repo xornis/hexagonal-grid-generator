@@ -45,8 +45,6 @@ namespace HexagonalConstructor.Editor
             {
                 EditorHelper.DrawProperties(serializedObject, generationModeProp.propertyPath, generatorProp);
             });
-
-            //DrawButton("Randomize Seed", EditorRandomizeSeedInternal);
         }
     }
 }

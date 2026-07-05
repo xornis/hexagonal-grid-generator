@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 
-using HexagonalConstructor.Editor;
 using System;
 using System.Linq;
 using UnityEditor;
