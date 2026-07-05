@@ -1,13 +1,17 @@
 # Hexagonal Constructor - Changelog
 
-## [2.0] - 2026-04-17
+## [2.3] - 2026-07-02
 
-## [Unreleased]
 ### Added
-- Modular Inspector mode (toggle between unified/separate components)
-- Rhombus Shape
+- Added Rectangle Shape
+- Added Rhombus Shape
+- Added "Hide Components" checkbox
+- Added "Randomize Seed" button to Preview Settings; Also randomizes seed when useSeed is checked
 ### Changed
-- Planning to improve UX seed randomization
+- UI/UX seed: seed appears when useSeed field is checked, and is hidden when not checked
+- Fixed how preview generation updates, accordingly to the seed and useSeed field. Also when useSeed is not checked, the seed is randomized when changing almost any field
+
+## [2.0] - 2026-04-17
 
 ### Added
 - "ContextBehaviour" base class for lazy component initialization
