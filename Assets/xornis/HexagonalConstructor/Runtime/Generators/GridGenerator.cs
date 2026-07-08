@@ -31,14 +31,44 @@ namespace HexagonalConstructor
             Generate();
         }
 
+        private bool IsReadyToGenerate()
+        {
+            bool isReady = true;
+
+            if (Context.Grid.HexPrefab == null)
+            {
+                Debug.LogError("[GridGenerator] Generation Failed! You must assign a Hex Prefab inside Grid Settings.");
+                isReady = false;
+            }
+            
+            if (Context.Generation.CurrentGenerator == null)
+            {
+                Debug.LogError("[GridGenerator] Generation Failed! You must choose a specific Generator Type in the Generation Settings.");
+                isReady = false;
+            }
+
+            return isReady;
+        }
+
         public void Generate()
         {
-            foreach (var hex in Context.Generation.CurrentGenerator.Generate(Context.Generation.StartHex))
-                SpawnHex(hex);
+            if (!IsReadyToGenerate()) return;
+
+            try
+            {
+                foreach (var hex in Context.Generation.CurrentGenerator.Generate(Context.Generation.StartHex))
+                    SpawnHex(hex);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"An unexpected error occurred: {ex.Message}");
+            }
         }
 
         public IEnumerator GenerateWithDelay(float delay)
         {
+            if (!IsReadyToGenerate()) yield break;
+
             foreach (var hex in Context.Generation.CurrentGenerator.Generate(Context.Generation.StartHex))
             {
                 SpawnHex(hex);

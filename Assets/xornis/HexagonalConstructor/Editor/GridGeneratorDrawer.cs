@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 
-using HexagonalConstructor.Editor;
 using System;
 using System.Linq;
 using UnityEditor;
@@ -31,7 +30,6 @@ namespace HexagonalConstructor
                 bool isUsingSeedNow = useSeedProp != null && useSeedProp.boolValue;
                 if (!wasUsingSeed && isUsingSeedNow)
                 {
-                    // Generate a fresh random seed automatically!
                     var seedProp = property.FindPropertyRelative("seed");
                     if (seedProp != null)
                     {
@@ -108,7 +106,7 @@ namespace HexagonalConstructor
 
                     if (GUI.Button(diceRect, "Randomize"))
                     {
-                        propertyChild.intValue = UnityEngine.Random.Range(1, 999999);
+                        propertyChild.intValue = UnityEngine.Random.Range(-int.MaxValue, int.MaxValue);
 
                         property.serializedObject.ApplyModifiedProperties();
                         PreviewSettings.InvokeForceRebuild();

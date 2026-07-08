@@ -13,11 +13,10 @@ namespace HexagonalConstructor
 
         public override IEnumerable<HexCoord> Generate(HexCoord start)
         {
+            if (useSeed) Random.InitState(seed);
+
             var rooms = new HashSet<HexCoord>();
 
-            //rooms.Clear();
-            rooms.Add(start);
-            
             ExecuteAlgorithm(start, rooms);
 
             foreach (var hex in rooms)

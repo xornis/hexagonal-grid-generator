@@ -23,7 +23,9 @@ namespace HexagonalConstructor.Editor
             mainGen = (GridGenerator)target;
             InitializeEditors();
 
-            hideComponents = SessionState.GetBool("HideComponents_" + mainGen.gameObject.GetInstanceID(), hideComponents);
+            hideComponents = SessionState.GetBool("HideComponents_" + mainGen.gameObject.GetInstanceID(), false);
+
+            ToggleComponentsVisibility(hideComponents, forceRefresh: false);
         }
 
         private void OnDisable()
@@ -49,6 +51,8 @@ namespace HexagonalConstructor.Editor
                 return;
             }
 
+            DrawSettingsWarnings();
+
             ChangeComponentsVisibility();
 
             DrawSections();
@@ -57,7 +61,10 @@ namespace HexagonalConstructor.Editor
             {
                 EditorGUILayout.HelpBox("Optional components: PreviewSettings, DebugSettings", MessageType.None);
                 if (GUILayout.Button("Add Optional Components"))
+                {
                     AddOptionalComponents();
+                    InitializeEditors();
+                }
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -65,6 +72,8 @@ namespace HexagonalConstructor.Editor
 
         private void InitializeEditors()
         {
+            DestroyEditors();
+
             var components = new Component[]
             {
                 mainGen.GetComponent<GridSettings>(),
@@ -107,10 +116,11 @@ namespace HexagonalConstructor.Editor
         {
             EditorGUI.BeginChangeCheck();
             hideComponents = GUILayout.Toggle(hideComponents, "Hide Components");
-            if (EditorGUI.EndChangeCheck()) ToggleComponentsVisibility(hideComponents);
+            if (EditorGUI.EndChangeCheck())
+                ToggleComponentsVisibility(hideComponents, forceRefresh: true);
         }
 
-        private void ToggleComponentsVisibility(bool state)
+        private void ToggleComponentsVisibility(bool state, bool forceRefresh)
         {
             var components = new Component[]
             {
@@ -129,6 +139,12 @@ namespace HexagonalConstructor.Editor
             }
 
             EditorUtility.SetDirty(mainGen.gameObject);
+
+            if (forceRefresh)
+            {
+                ActiveEditorTracker.sharedTracker.ForceRebuild();
+                UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+            }
         }
 
         private bool ValidateRequiredComponents()
@@ -163,6 +179,18 @@ namespace HexagonalConstructor.Editor
 
             if (component == null)
                 mainGen.gameObject.AddComponent<T>();
+        }
+
+        private void DrawSettingsWarnings()
+        {
+            var gridSettings = mainGen.GetComponent<GridSettings>();
+            if (gridSettings != null && gridSettings.HexPrefab == null)
+                EditorGUILayout.HelpBox("Please assign a Hex Prefab in Grid Settings before attempting to build the grid.", MessageType.Warning);
+
+
+            var genSettings = mainGen.GetComponent<GenerationSettings>();
+            if (genSettings != null && genSettings.CurrentGenerator == null)
+                EditorGUILayout.HelpBox("Please select a Generator Type in Generation Settings before attempting to build the grid.", MessageType.Warning);
         }
     }
 }
