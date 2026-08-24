@@ -1,5 +1,6 @@
 <img width="1600" height="350" alt="Screenshot_7_5" src="https://github.com/user-attachments/assets/89c40752-6fb4-4381-8a6a-787b54a3ec5e" />
-Hexagonal Constructor is a lightweight procedural hex-grid generator for Unity.
+
+## Hexagonal Constructor is a lightweight procedural hex-grid generator for Unity.
 It supports both **randomized** generation (BranchWalk, ClusterGrowth) and **shape** generation (Disk, Ring, etc.), and includes a clean custom inspector with live preview and debugging tools.
 
 ## Features
