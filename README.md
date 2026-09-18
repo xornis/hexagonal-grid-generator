@@ -64,3 +64,6 @@ It supports both **randomized** generation (BranchWalk, ClusterGrowth) and **sha
 
 ## Documentation
 - Full PDF documentation included with detailed API reference and examples.
+
+## License
+This project is licensed under the [Apache License 2.0](LICENSE).
